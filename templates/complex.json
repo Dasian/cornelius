@@ -1,0 +1,18 @@
+{"title": "This is actually quite pog", 
+  "color": 9055202, 
+  "description": "woah hecking woah what the fuck is even going on", 
+  "footer": {
+    "text": "some really cooler footer text", 
+    "icon_url": "https://pngimg.com/uploads/lion/lion_PNG3809.png"
+  }, 
+  "thumbnail": {
+    "url": "https://www.nasa.gov/sites/default/files/thumbnails/image/cxq8xp_xcaauqs4.jpg"
+  }, 
+  "author": {
+    "name": "Ya Boi", 
+    "icon_url": "https://vignette1.wikia.nocookie.net/avatar/images/8/85/Water_Tribe_emblem.png/revision/latest?cb=20090125144137"
+  }, 
+  "image": {
+    "url": "https://res.cloudinary.com/teepublic/image/private/s--VSAbGHtU--/t_Preview/b_rgb:191919,c_limit,f_jpg,h_630,q_90,w_630/v1528184867/production/designs/2757242_0.jpg"
+  }
+}

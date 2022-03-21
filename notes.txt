@@ -1,0 +1,82 @@
+Just a list of notes and things todo
+
+Notes:
+run kill 1 in shell tab for rate limiting
+If problem persists, consider going to a new host
+
+TODO:
+fields need to be a list of dictionaries, multiple attributes are required
+
+Improvements:
+Ask for confirmation before deleting/saving
+Multi message commands require state
+
+Working:
+Title, description, url (title-url), color
+
+Problems:
+Figure out rate limiting
+
+*******COMMANDS*******
+Generation:
+admins pm bot
+help embed- show all cmds with usage for this process
+new - start new embedded message
+preview - view a preview of the message
+publish - shows a preview, maybe ask for server, maybe ask for confirmation; publishes to server
+add [attribute] [value]- adds/updates attribute to the current msg 
+remove [attribute] - removes attribute from the current msg
+
+Additional Generation:
+templates - shows the saved embedded messages
+load [name]- loads saved embedded message 
+save [name]- saves the embedded message on the server, for future use
+delete [name]- deletes a saved embedded message
+
+Old stuff:
+'''
+General:
+  !help - displays this message
+  !example - displays an example embedded message
+  
+Editing Commands:  
+  !new - start new embedded message
+  !preview - view a preview of the message
+  !add [attribute] [value]- adds/updates attribute to the current msg 
+  !remove [attribute] - removes attribute from the current msg
+  !channels - lists the channels and ids you can publish the current message to
+  !publish [channel_id] - publishes the currently loaded message to the chosen channel_id 
+  
+Template Commands:
+  !templates - shows the saved embedded messages with their name
+  !load [name]- loads a saved embedded message as the current message
+  !save [name]- saves the embedded message on the server, for future use
+    If you use a name that already exists, this will overwrite it
+  !delete [name]- deletes a saved embedded message from the server
+
+Single Attributes: 
+  title - text 
+  color - hex
+  description - text
+  title-url - url
+  type - text 
+    possible values for type: rich, image, video, gifv, article, link
+
+Grouped-Attributes
+author-[name/url/icon_url] - text, url, url
+fields-[name/value/inline] - text, text, True/False
+footer-[text/icon_url] - text, url 
+image-[url/proxy_url/width/height] - url, url, number
+thumbnail-[url/proxy_url/width/height] - url, url, number, number
+video-[url/width/height] - url, number, number
+
+Adding Examples:
+  title - text
+    !add title This is All Going into the Title
+  color - hex ex: 0xff00bb or 0xFF00BB
+    !add color 0xff00bb
+    !add color 0xFF00BB
+  footer-[text/icon_url] - text, url
+    !add footer-text [your_text_here] 
+    !add footer-icon_url [your_url_here]
+'''
