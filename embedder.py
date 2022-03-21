@@ -195,6 +195,26 @@ def second_arg(msg):
     s += ' ' + words[i]
   return s
 
+# returns an embedded message containing a list of accessible 
+# channels with their respective servers
+# c is an ordered list of (server, channel)
+def channels(list):
+  print("Generating accessible channels")
+  e = discord.Embed(title="Accessible Channels", description="List of channels that I'm able to publish to", color = 0x55FDF9)
+  e.set_footer(text="run !publish [channel_id] to publish the current message to that channel")
+  id = 0
+  while id < len(list):
+    channels = ''
+    server = list[id][0]
+    while id < len(list) and list[id][0] == server:
+      channel = list[id][1]
+      channels += 'ID: ' + str(id) + ' | Channel: ' + str(channel) + '\n'
+      id += 1
+    # create a field where the title is the server name 
+    # and the contents are the accessible channels with their id
+    e.add_field(name="Server: "+str(server), value=channels, inline=False)
+  return e
+  
 # returns embedder help functionality
 def help():
   f = open('bot_embeds/help.json', 'r')

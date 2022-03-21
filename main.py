@@ -71,9 +71,9 @@ async def on_message(message):
         await message.channel.send(embed = help)
       elif message.content.startswith(admin_cmds[1]): # new
         embedder.new()
-        await message.channel.send(embed=embedder.preview())
+        await message.channel.send("Current message:", embed=embedder.preview())
       elif message.content.startswith(admin_cmds[2]): # preview
-        await message.channel.send(embed=embedder.preview())
+        await message.channel.send("Current message:", embed=embedder.preview())
       elif message.content.startswith(admin_cmds[3]): # publish
         # show what will be published
         e = embedder.preview()
@@ -93,15 +93,13 @@ async def on_message(message):
         # publishing
         await channel.send(embed=e)
       elif message.content.startswith(admin_cmds[10]): # channels
-        await message.channel.send("List of accessible servers and channels:")
+        # generate a list of accessible channels and associated servers
         publish_channels.clear()
-        for server in client.guilds:
-          s = "Server: " + str(server)          
-          await message.channel.send(s)
+        for server in client.guilds:       
           for channel in server.text_channels:
-            c = "ID: "+str(len(publish_channels))+"\tChannel: "+ str(channel)
-            await message.channel.send(c)
             publish_channels.append((server, channel))
+        # print list of accessible servers and channels
+        await message.channel.send(embed = embedder.channels(publish_channels))
       elif message.content.startswith(admin_cmds[4]): # add
         if embedder.add(message.content):
           msg = embedder.preview()
@@ -110,7 +108,7 @@ async def on_message(message):
           await message.channel.send("Unable to add content. Make sure the property exists")
       elif message.content.startswith(admin_cmds[5]): # remove
         if embedder.remove(message.content):
-          await message.channel.send(embed=embedder.preview())
+          await message.channel.send("Current message:", embed=embedder.preview())
         else:
           await message.channel.send("Unable to remove content. Make sure the property exists")
       elif message.content.startswith(admin_cmds[6]): # templates
@@ -119,13 +117,12 @@ async def on_message(message):
           n = t[0]
           n = n[11:n.find('.json')]
           name = "Name: " + n
-          await message.channel.send(name)
-          await message.channel.send(embed=t[1])
+          await message.channel.send(name, embed=t[1])
         if temps == []:
           await message.channel.send("There are no saved templates :((")
       elif message.content.startswith(admin_cmds[7]): # load
         if embedder.load(message.content):
-          await message.channel.send(embed=embedder.preview())
+          await message.channel.send("Current message:", embed=embedder.preview())
         else:
           await message.channel.send("Couldn't load template. Is the name correct?")
       elif message.content.startswith(admin_cmds[8]): # save
