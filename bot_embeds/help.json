@@ -13,7 +13,7 @@
         },
         {
           "name": "Editing Commands",
-          "value": "corn?new - start new embedded message\ncorn?preview - view a preview of the message\ncorn?add [attribute] [value]- adds/updates attribute to the current msg  corn?remove [attribute] - removes attribute from the current msg\ncorn?channels - lists the channels and ids you can publish the current message to\ncorn?publish [channel-id] - publishes the currently loaded message to the chosen channel-id "
+          "value": "corn?new - start new embedded message\ncorn?preview - view a preview of the message\ncorn?add [attribute] [value]- adds/updates attribute to the current msg \ncorn?remove [attribute] - removes attribute from the current msg\ncorn?channels - lists the channels and ids you can publish the current message to\ncorn?publish [channel-id] - publishes the currently loaded message to the chosen channel-id "
         },
         {
           "name": "Template Commands",
