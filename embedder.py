@@ -1,5 +1,7 @@
 '''
   Functionality for embedded message creation
+  Creates, edits, loads, and saves embedded msg objects
+  (embedded msg objects are just dictionaries)
   Can only be accessed from admins
 '''
 
@@ -80,7 +82,7 @@ def add(msg):
     print("dict_attr:", dict_attr)
     print("Original Embed:",embed)
 
-    # makes sure the attr is an existing attribute
+    # check if dict name and attr are an accepted combination
     if not dict_attr in attribute_mappings[dict_name]:
       return False
     
@@ -98,18 +100,40 @@ def add(msg):
 
 # removes content from the embedded message
 # returns true on success, false otherwise
+# TODO remove nested attributes
 def remove(msg):
+  # verification/init
   print("Removing attribute")
   words = msg.split(' ')
   if len(words) < 2:
     return False
   attr = words[1]
   print("Attr:",attr)
+  
+  # regular embedded attributes
   if attr in attributes:
     if attr == 'title-url':
       attr = 'url'
     embed.pop(attr)
     return True
+
+  # nested embedded attributes
+  words = attr.split('-')
+  dict_name, dict_attr = words
+  if dict_name in valid_dict_names and dict_attr in valid_dict_attributes:
+
+    # check if dict name and attr are an accepted combination
+    if not dict_attr in attribute_mappings[dict_name]:
+      return False
+    
+    # remove attribute from nested dictionary
+    if dict_name in embed.keys():
+      d = embed[dict_name]
+      d.pop(dict_attr)
+      embed[dict_name].update(d)
+
+    return True
+
   return False
 
 # shows all saved templates
@@ -171,7 +195,7 @@ def save(msg):
   f.close()
   return True
 
-# deletes template from saved templates
+# deletes saved template
 def delete(msg):
   # verification
   print("Deleting Template")
