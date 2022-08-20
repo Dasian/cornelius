@@ -7,11 +7,13 @@
 import os
 import discord
 import datetime
+from dotenv import load_dotenv
 # local files
 import embedder
 import server_bot
 
 # secrets
+load_dotenv()
 TOKEN = os.environ['TOKEN']
 PERMS = os.environ['PERMS']
 NUM_ADMINS = int(os.environ['NUM_ADMINS'])
