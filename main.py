@@ -32,8 +32,8 @@ for i in range(len(admin_cmds)):
   admin_cmds[i] = cmd_start + admin_cmds[i]
 publish_channels = []
 
-# Connect to client
-client = discord.Client(intents=discord.Intents.default())
+# Connect to client (all intents enabled but could specify if you care)
+client = discord.Client(intents=discord.Intents.all())
 
 # Run when the bot is starting up (startup)
 @client.event
