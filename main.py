@@ -21,7 +21,7 @@ for i in range(0, NUM_ADMINS):
   admins.append(int(os.environ[s]))
 
 # command list
-cmd_start = '!'
+cmd_start = 'corn?'
 server_cmds = ['help', 'hey']
 admin_cmds =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels']
 for i in range(len(server_cmds)):
@@ -37,7 +37,7 @@ client = discord.Client(intents=discord.Intents.default())
 @client.event
 async def on_ready():
   print("Logged in as {0.user}".format(client),' on ', datetime.datetime.now())
-  # generate channels for publishing; can be updated by calling !channels
+  # generate channels for publishing; can be updated by calling corn?channels
   for server in client.guilds:
     for channel in server.text_channels:
       publish_channels.append((server, channel))
@@ -142,7 +142,7 @@ async def on_message(message):
         desc = '"' + message.content + '" isn\'t a command idiot lmao'
         e = discord.Embed(title='You sussy baka bitch.', description=desc, color=0xf30404, url=title_url)
         e.set_thumbnail(url = img_url)
-        e.set_footer(text='type !help for help tho')
+        e.set_footer(text='type corn?help for help tho')
         await message.channel.send(embed=e)
     except Exception as e:
       print("Exception:", e)

@@ -9,15 +9,15 @@
       "fields": [
         {
           "name": "General Commands:",
-          "value": "!help - displays this message\n!example - displays an example embedded message; Not implemented yet lmao get fucked"
+          "value": "corn?help - displays this message\ncorn?example - displays an example embedded message; Not implemented yet lmao get fucked"
         },
         {
           "name": "Editing Commands",
-          "value": "!new - start new embedded message\n!preview - view a preview of the message\n!add [attribute] [value]- adds/updates attribute to the current msg  !remove [attribute] - removes attribute from the current msg\n!channels - lists the channels and ids you can publish the current message to\n!publish [channel-id] - publishes the currently loaded message to the chosen channel-id "
+          "value": "corn?new - start new embedded message\ncorn?preview - view a preview of the message\ncorn?add [attribute] [value]- adds/updates attribute to the current msg  corn?remove [attribute] - removes attribute from the current msg\ncorn?channels - lists the channels and ids you can publish the current message to\ncorn?publish [channel-id] - publishes the currently loaded message to the chosen channel-id "
         },
         {
           "name": "Template Commands",
-          "value": "!templates - shows the saved embedded messages with their name\n!load [name]- loads a saved embedded message as the current message\n!save [name]- saves the embedded message on the server, for future use\n  Note: If you use a name that already exists, this will overwrite it\n!delete [name]- deletes a saved embedded message from the server"
+          "value": "corn?templates - shows the saved embedded messages with their name\ncorn?load [name]- loads a saved embedded message as the current message\ncorn?save [name]- saves the embedded message on the server, for future use\n  Note: If you use a name that already exists, this will overwrite it\ncorn?delete [name]- deletes a saved embedded message from the server"
         },
         {
           "name": "Single Attributes",
@@ -29,11 +29,11 @@
         },
         {
           "name": "Adding Examples",
-          "value": "title - text\n\t!add title This is All Going into the Title\n  color - hex ex: 0xff00bb or 0xFF00BB\n\t!add color 0xff00bb\n\t!add color 0xFF00BB\n  footer-[text/icon_url] - text, url\n\t!add footer-text [your_text_here] \n\t!add footer-icon_url [your_url_here]"
+          "value": "title - text\n\tcorn?add title This is All Going into the Title\n  color - hex ex: 0xff00bb or 0xFF00BB\n\tcorn?add color 0xff00bb\n\tcorn?add color 0xFF00BB\n  footer-[text/icon_url] - text, url\n\tcorn?add footer-text [your_text_here] \n\tcorn?add footer-icon_url [your_url_here]"
         },
         {
           "name": "Things I'm working on",
-          "value": "!example to print an example\n!add fields-[name/value/inline] for adding fields to messages\n!help [general/template/attributes/examples] to print a smaller help box"
+          "value": "corn?example to print an example\ncorn?add fields-[name/value/inline] for adding fields to messages\ncorn?help [general/template/attributes/examples] to print a smaller help box"
         }
       ],
       "footer": {
