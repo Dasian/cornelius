@@ -177,6 +177,7 @@ def load(msg):
 
 # save the current embedded message as a template
 # second arg should be templatename, no path/extension
+# allows for names with spaces
 def save(msg):
   # verification
   print("Saving Template")
@@ -210,7 +211,8 @@ def delete(msg):
     return False
   return True
 
-# returns the second arg of an input as a continuous string
+# (helper) returns the second arg of an input as a continuous string
+# required since template names allow for spaces
 def second_arg(msg):
   words = msg.split(' ')
   s = words[1]

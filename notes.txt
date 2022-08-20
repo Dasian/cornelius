@@ -1,25 +1,8 @@
 Just a list of notes and things todo
 
-Notes:
-run kill 1 in shell tab for rate limiting
-If problem persists, consider going to a new host
-8/18:
-use the dotenv python library to replace the environment variables with a file
-for twitch integration look into this script:
-https://github.com/mechevarria/twitch-live-discord/blob/main/script.py
-
 TODO:
 fields need to be a list of dictionaries, multiple attributes are required
 
-Improvements:
-Ask for confirmation before deleting/saving
-Multi message commands require state
-
-Working:
-Title, description, url (title-url), color
-
-Problems:
-Figure out rate limiting
 
 *******COMMANDS*******
 Generation:

@@ -22,13 +22,17 @@ async def add(message):
         msg = embedder.preview()
         await message.channel.send(embed=msg)
     else:
-        await message.channel.send("Unable to add content. Make sure the property exists")
+        await message.channel.send("Usage: corn?add [attribute] [value]")
+        await message.channel.send("Unable to add content. Make sure the property exists.")
+        # TODO add list of attributes
 
 async def remove(message):
     if embedder.remove(message.content):
         await message.channel.send("Current message:", embed=embedder.preview())
     else:
+        await message.channel.send("Usage: corn?remove [attribute]")
         await message.channel.send("Unable to remove content. Make sure the property exists")
+        # TODO add list of attributes
 
 async def templates(message):
     temps = embedder.templates()
@@ -44,6 +48,8 @@ async def load(message):
     if embedder.load(message.content):
         await message.channel.send("Current message:", embed=embedder.preview())
     else:
+        await message.channel.send("Usage: corn?load [template_name]")
+        await message.channel.send("Use corn?templates to view saved templates")
         await message.channel.send("Couldn't load template. Is the name correct?")
 
 async def save(message):
@@ -56,6 +62,8 @@ async def delete(message):
     if embedder.delete(message.content):
         await message.channel.send("Successfully deleted template")
     else:
+        await message.channel.send("Usage: corn?delete [template_name]")
+        await message.channel.send("Use corn?templates to view saved templates")
         await message.channel.send("Couldn't delete template. Is the name correct?")
 
 '''
@@ -81,8 +89,7 @@ async def show_channels(message, client):
 # publish_channel is the channel to publish to
 # publishing handled in on_message
 async def publish(message, client):
-    # get channel information
-    accessible_channels = get_channels(client)
+    # verify usage
     words = message.content.split(' ')
     if len(words) < 2:
         await message.channel.send('usage: corn?publish [channel_id]')
@@ -90,12 +97,14 @@ async def publish(message, client):
         return (False, -1)
     id = int(words[1])
     if id >= len(accessible_channels) or id < 0:
-        await message.channel.send('invalid channel')
+        await message.channel.send('invalid channel_id')
         await show_channels(message, client)
         return (False, -1)
+
+    # get publish information
+    accessible_channels = get_channels(client)
     sname = accessible_channels[id][0].name
     s = "\nServer: " + sname
-
     publish_channel = accessible_channels[id][1]
     c = "\nChannel: " + publish_channel.name
     msg = s  + c
@@ -112,6 +121,7 @@ async def publish(message, client):
 '''
     Misc
 '''
+# TODO expand for specific sections
 async def help(message):
     help = embedder.help()
     await message.channel.send(embed = help)
