@@ -161,7 +161,7 @@ async def on_message(message):
           else:
             await message.channel.send("Couldn't delete template. Is the name correct?")
       else:
-        img_url = 'https://gifimage.net/wp-content/uploads/2017/07/angry-anime-gif-18.gif'
+        img_url = 'https://media1.tenor.com/images/c111231424bfa61d015c9dc9a3a81f7f/tenor.gif?itemid=19268094'
         title_url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 
         desc = '"' + message.content + '" isn\'t a command idiot lmao'
@@ -171,7 +171,8 @@ async def on_message(message):
         await message.channel.send(embed=e)
     except Exception as e:
       print("Exception:", e)
-      await message.channel.send("Something went wrong :((( plz create/load a new message")
+      await message.channel.send("Something went wrong :(((")
+      await message.channel.send("here some nerd shit: " + e)
       
   # Server commands
   elif message.guild:
@@ -185,7 +186,7 @@ async def on_message(message):
   
   # Random patron dm
   else:
-    await message.channel.send("I'm a bot, not Valentina")
+    await message.channel.send("why we talk in secret?")
     await message.channel.send(server_bot.random_message())
     
 # Run client
