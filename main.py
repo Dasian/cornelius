@@ -23,17 +23,21 @@ for i in range(0, NUM_ADMINS):
   admins.append(int(os.environ[s]))
 
 # command list
-cmd_start = 'corn?'
+cmd_start = '!' # CHANGE THIS BEFORE MERGING WITH MAIN
 server_cmds = ['help', 'hey']
 admin_cmds =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels']
 for i in range(len(server_cmds)):
   server_cmds[i] = cmd_start + server_cmds[i]
 for i in range(len(admin_cmds)):
   admin_cmds[i] = cmd_start + admin_cmds[i]
-publish_channels = []
+accessible_channels = []
 
 # Connect to client (all intents enabled but could specify if you care)
 client = discord.Client(intents=discord.Intents.all())
+
+# used to confirm a message publication
+confirmation = False
+publish_channel = None
 
 # Run when the bot is starting up (startup)
 @client.event
@@ -42,7 +46,7 @@ async def on_ready():
   # generate channels for publishing; can be updated by calling corn?channels
   for server in client.guilds:
     for channel in server.text_channels:
-      publish_channels.append((server, channel))
+      accessible_channels.append((server, channel))
 
 # Run whenever a message is received in any channel/dm (commands)
 @client.event
@@ -67,6 +71,18 @@ async def on_message(message):
     print("*************ADMIN COMMAND*************")
     print("User:", message.author)
     print("Command:",message.content)
+
+    # publish confirmation
+    global confirmation, publish_channel
+    if confirmation:
+      if message.content.lower() == 'yes':
+        await message.channel.send('poggies')
+        await publish_channel.send(embed=embedder.preview())
+      else:
+        await message.channel.send('stop wasting my time bihtc')
+      confirmation = False
+      return
+
     try:
       if message.content.startswith(admin_cmds[0]): # help
         help = embedder.help()
@@ -77,31 +93,38 @@ async def on_message(message):
       elif message.content.startswith(admin_cmds[2]): # preview
         await message.channel.send("Current message:", embed=embedder.preview())
       elif message.content.startswith(admin_cmds[3]): # publish
-        # show what will be published
-        e = embedder.preview()
-        await message.channel.send("Message to Publish:",embed = e)
 
-        # show what channel it will be published to
+        # get channel information
         words = message.content.split(' ')
         id = int(words[1])
-        s = "Server: " + publish_channels[id][0].name
-        channel = publish_channels[id][1]
-        c = " Channel: " + channel.name
-        msg = "Publishing to " + s  + c
+        if id >= len(accessible_channels) or id < 0:
+          await message.channel.send('invalid channel')
+          # show accessible channels here?
+          return
+        sname = accessible_channels[id][0].name
+        s = "\nServer: " + sname
+
+        publish_channel = accessible_channels[id][1]
+        c = "\nChannel: " + publish_channel.name
+        msg = "Publishing to: " + s  + c
+
+        # show what will be published where
+        e = embedder.preview()
+        await message.channel.send("Message to Publish:",embed = e)
         await message.channel.send(msg)
         
         # confirmation
+        confirmation = True
+        await message.channel.send("Is this information correct? (yes/no)")
 
-        # publishing
-        await channel.send(embed=e)
       elif message.content.startswith(admin_cmds[10]): # channels
         # generate a list of accessible channels and associated servers
-        publish_channels.clear()
+        accessible_channels.clear()
         for server in client.guilds:       
           for channel in server.text_channels:
-            publish_channels.append((server, channel))
+            accessible_channels.append((server, channel))
         # print list of accessible servers and channels
-        await message.channel.send(embed = embedder.channels(publish_channels))
+        await message.channel.send(embed = embedder.channels(accessible_channels))
       elif message.content.startswith(admin_cmds[4]): # add
         if embedder.add(message.content):
           msg = embedder.preview()
