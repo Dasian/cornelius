@@ -37,14 +37,18 @@ messages = ["Hellooo", "^-^", 'these nuts',
 # Initialization
 random.seed(int(time.time()))
 
-# returns help message for server commands
-def help():
+# sends a help message for server commands
+async def help(message):
   help = '''
 !help - Displays this message
 !hey - Get a random val quote
   '''
-  return help
+  await message.channel.send(help)
 
-# returns a random message from a list
+# (helper) returns a random message from a list
 def random_message():
   return messages[random.randint(0, len(messages))]
+
+# sends a random val quote
+async def hey(message):
+  await message.channel.send(random_message())

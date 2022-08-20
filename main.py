@@ -10,8 +10,9 @@ import datetime
 from dotenv import load_dotenv
 # local files
 import embedder
-import server_bot
-import admin_cmds as cmd
+import admin_cmds
+import server_cmds
+
 
 # retrieve secrets
 load_dotenv()
@@ -25,12 +26,12 @@ for i in range(0, NUM_ADMINS):
 
 # generate command list
 cmd_start = '!' # CHANGE THIS BEFORE MERGING WITH MAIN
-server_cmds = ['help', 'hey']
-admin_cmds =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels']
-for i in range(len(server_cmds)):
-  server_cmds[i] = cmd_start + server_cmds[i]
-for i in range(len(admin_cmds)):
-  admin_cmds[i] = cmd_start + admin_cmds[i]
+server_prefix = ['help', 'hey']
+admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels']
+for i in range(len(server_prefix)):
+  server_prefix[i] = cmd_start + server_prefix[i]
+for i in range(len(admin_prefix)):
+  admin_prefix[i] = cmd_start + admin_prefix[i]
 
 # publishing vars
 confirmation = False
@@ -81,30 +82,30 @@ async def on_message(message):
 
     # generate and publish embedded messages
     try:
-      if message.content.startswith(admin_cmds[0]): # help
-        await cmd.help(message)
-      elif message.content.startswith(admin_cmds[1]): # new
-        await cmd.new(message)
-      elif message.content.startswith(admin_cmds[2]): # preview
-        await cmd.preview(message)
-      elif message.content.startswith(admin_cmds[3]): # publish
-        confirmation, publish_channel = await cmd.publish(message, client)
-      elif message.content.startswith(admin_cmds[10]): # channels
-        await cmd.show_channels(message, client)
-      elif message.content.startswith(admin_cmds[4]): # add
-        await cmd.add(message)
-      elif message.content.startswith(admin_cmds[5]): # remove
-        await cmd.remove(message)
-      elif message.content.startswith(admin_cmds[6]): # templates
-        await cmd.templates(message)
-      elif message.content.startswith(admin_cmds[7]): # load
-        await cmd.load(message)
-      elif message.content.startswith(admin_cmds[8]): # save
-        await cmd.save(message)
-      elif message.content.startswith(admin_cmds[9]): # delete
-        await cmd.delete(message)
+      if message.content.startswith(admin_prefix[0]): # help
+        await admin_cmds.help(message)
+      elif message.content.startswith(admin_prefix[1]): # new
+        await admin_cmds.new(message)
+      elif message.content.startswith(admin_prefix[2]): # preview
+        await admin_cmds.preview(message)
+      elif message.content.startswith(admin_prefix[3]): # publish
+        confirmation, publish_channel = await admin_cmds.publish(message, client)
+      elif message.content.startswith(admin_prefix[10]): # channels
+        await admin_cmds.show_channels(message, client)
+      elif message.content.startswith(admin_prefix[4]): # add
+        await admin_cmds.add(message)
+      elif message.content.startswith(admin_prefix[5]): # remove
+        await admin_cmds.remove(message)
+      elif message.content.startswith(admin_prefix[6]): # templates
+        await admin_cmds.templates(message)
+      elif message.content.startswith(admin_prefix[7]): # load
+        await admin_cmds.load(message)
+      elif message.content.startswith(admin_prefix[8]): # save
+        await admin_cmds.save(message)
+      elif message.content.startswith(admin_prefix[9]): # delete
+        await admin_cmds.delete(message)
       else:
-        await cmd.invalid(message)
+        await admin_cmds.invalid(message)
     except Exception as e:
       print("Exception:", e)
       await message.channel.send("Something went wrong :(((")
@@ -113,17 +114,15 @@ async def on_message(message):
   # Server commands
   elif message.guild:
     # send a random message anywhere
-    if message.content.startswith(server_cmds[0]): # help
-      help = server_bot.help()
-      await message.channel.send(help)
-    elif message.content.startswith(server_cmds[1]): # hey
-      msg = server_bot.random_message()
-      await message.channel.send(msg)
+    if message.content.startswith(server_prefix[0]): # help
+      await server_cmds.help(message)
+    elif message.content.startswith(server_prefix[1]): # hey
+      await server_cmds.hey(message)
   
   # Random patron dm
   else:
     await message.channel.send("why we talk in secret?")
-    await message.channel.send(server_bot.random_message())
+    await message.channel.send(server_cmds.random_message())
     
 # Run client
 client.run(TOKEN)
