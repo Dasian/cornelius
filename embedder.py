@@ -100,7 +100,6 @@ def add(msg):
 
 # removes content from the embedded message
 # returns true on success, false otherwise
-# TODO remove nested attributes
 def remove(msg):
   # verification/init
   print("Removing attribute")

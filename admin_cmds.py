@@ -84,6 +84,10 @@ async def publish(message, client):
     # get channel information
     accessible_channels = get_channels(client)
     words = message.content.split(' ')
+    if len(words) < 2:
+        await message.channel.send('usage: corn?publish [channel_id]')
+        await show_channels(message, client)
+        return (False, -1)
     id = int(words[1])
     if id >= len(accessible_channels) or id < 0:
         await message.channel.send('invalid channel')
