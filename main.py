@@ -14,31 +14,38 @@ import admin_cmds
 import server_cmds
 
 
-# retrieve secrets
-load_dotenv()
-TOKEN = os.environ['TOKEN']
-PERMS = os.environ['PERMS']
-NUM_ADMINS = int(os.environ['NUM_ADMINS'])
-admins = []
-for i in range(0, NUM_ADMINS):
-  s = "ADMIN" + str(i)
-  admins.append(int(os.environ[s]))
-
-# generate command list
+# global vars
 cmd_start = '!' # CHANGE THIS BEFORE MERGING WITH MAIN
 server_prefix = ['help', 'hey']
 admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels']
-for i in range(len(server_prefix)):
-  server_prefix[i] = cmd_start + server_prefix[i]
-for i in range(len(admin_prefix)):
-  admin_prefix[i] = cmd_start + admin_prefix[i]
-
-# publishing vars
+admins = []
 confirmation = False
 publish_channel = None
-
 # Connect to client (all intents enabled but could specify if you care)
 client = discord.Client(intents=discord.Intents.all())
+
+# guess what this function is
+def main():
+  # retrieve secrets
+  global admins
+  load_dotenv()
+  TOKEN = os.environ['TOKEN']
+  PERMS = os.environ['PERMS']
+  NUM_ADMINS = int(os.environ['NUM_ADMINS'])
+  for i in range(0, NUM_ADMINS):
+    s = "ADMIN" + str(i)
+    admins.append(int(os.environ[s]))
+
+  # generate cmd prefix list
+  global admin_prefix, server_prefix, cmd_start
+  for i in range(len(server_prefix)):
+    server_prefix[i] = cmd_start + server_prefix[i]
+  for i in range(len(admin_prefix)):
+    admin_prefix[i] = cmd_start + admin_prefix[i]
+
+  # Run client
+  client.run(TOKEN)
+
 
 # Run when the bot is starting up
 @client.event
@@ -124,5 +131,5 @@ async def on_message(message):
     await message.channel.send("why we talk in secret?")
     await message.channel.send(server_cmds.random_message())
     
-# Run client
-client.run(TOKEN)
+if __name__ == '__main__':
+  main()
