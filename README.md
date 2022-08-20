@@ -5,8 +5,6 @@ Custom bot for vtuber Valentina Chisei
 - Create, save, and send custom embedded messages controlled through private messages
 
 # TODO (ordered)
-- Fix remove
-- Organize commands better
 - Update ui (look into interactions api and select menu)
 - Send regular messages
 - Add social media notification integration
