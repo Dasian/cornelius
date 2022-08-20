@@ -121,10 +121,16 @@ async def publish(message, client):
 '''
     Misc
 '''
-# TODO expand for specific sections
+# prints help menu
+# usage: corn?help [group]
 async def help(message):
-    help = embedder.help()
-    await message.channel.send(embed = help)
+
+    words = message.content.split(' ')
+    group = None
+    if len(words) == 2:
+        group = words[1].lower()
+
+    await message.channel.send(embed=embedder.help(group))
 
 async def invalid(message):
     img_url = 'https://media1.tenor.com/images/c111231424bfa61d015c9dc9a3a81f7f/tenor.gif?itemid=19268094'

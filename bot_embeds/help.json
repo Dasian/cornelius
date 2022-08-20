@@ -1,42 +1,42 @@
 {
-      "type": "rich",
-      "title": "You need help you little bitch?",
-      "description": "yeah fuck you",
-      "color": 12256499,
-      "thumbnail": {
-        "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"
-      }, 
-      "fields": [
-        {
-          "name": "General Commands:",
-          "value": "corn?help - displays this message\ncorn?example - displays an example embedded message; Not implemented yet lmao get fucked"
-        },
-        {
-          "name": "Editing Commands",
-          "value": "corn?new - start new embedded message\ncorn?preview - view a preview of the message\ncorn?add [attribute] [value]- adds/updates attribute to the current msg \ncorn?remove [attribute] - removes attribute from the current msg\ncorn?channels - lists the channels and ids you can publish the current message to\ncorn?publish [channel-id] - publishes the currently loaded message to the chosen channel-id "
-        },
-        {
-          "name": "Template Commands",
-          "value": "corn?templates - shows the saved embedded messages with their name\ncorn?load [name]- loads a saved embedded message as the current message\ncorn?save [name]- saves the embedded message on the server, for future use\n  Note: If you use a name that already exists, this will overwrite it\ncorn?delete [name]- deletes a saved embedded message from the server"
-        },
-        {
-          "name": "Single Attributes",
-          "value": "title - text \ncolor - hex\ndescription - text\ntitle-url - url\ntype - text \n  Possible values for type: rich, image, video, gifv, article, link"
-        },
-        {
-          "name": "Grouped Attributes",
-          "value": "author-[name/url/icon_url] - text, url, url\nfields-[name/value/inline] - text, text, True/False; Not implemented yet srry\nfooter-[text/icon_url] - text, url \nimage-[url/proxy_url/width/height] - url, url, number\nthumbnail-[url/proxy_url/width/height] - url, url, number, number\nvideo-[url/width/height] - url, number, number"
-        },
-        {
-          "name": "Adding Examples",
-          "value": "title - text\n\tcorn?add title This is All Going into the Title\n  color - hex ex: 0xff00bb or 0xFF00BB\n\tcorn?add color 0xff00bb\n\tcorn?add color 0xFF00BB\n  footer-[text/icon_url] - text, url\n\tcorn?add footer-text [your_text_here] \n\tcorn?add footer-icon_url [your_url_here]"
-        },
-        {
-          "name": "Things I'm working on",
-          "value": "corn?example to print an example\ncorn?add fields-[name/value/inline] for adding fields to messages\ncorn?help [general/template/attributes/examples] to print a smaller help box"
-        }
-      ],
-      "footer": {
-        "text": "little bitch"
-      }
+  "type": "rich",
+  "title": "You need help you little bitch?",
+  "description": "These are a list of groups you can use to find specific cmds for a task.\n\nUsage: corn?help [group]\n\nEx: corn?help edit",
+  "color": 12256499,
+  "thumbnail": {
+    "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"
+  }, 
+  "fields": [
+    {
+      "name": "empty (default)",
+      "value": "Display this message."
+    }, 
+    {
+      "name": "all",
+      "value": "List contents of every group in one message (large)."
+    },
+    {
+      "name": "edit",
+      "value": "Create and edit messages."
+    },
+    {
+      "name": "templates",
+      "value": "Load/create message templates."
+    },
+    {
+      "name": "publish",
+      "value": "Post a message to a server channel."
+    },
+    {
+      "name": "attributes",
+      "value": "List of all editing attributes with descriptions."
+    },
+    {
+      "name": "misc",
+      "value": "Other admin cmds."
     }
+  ],
+  "footer": {
+    "text": "little bitch"
+  }
+}

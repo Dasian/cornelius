@@ -1,0 +1,18 @@
+{
+    "type": "rich",
+    "title": "You need help miscing you little bitch?",
+    "description": "",
+    "color": 12256499,
+    "thumbnail": {
+      "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"
+    }, 
+    "fields": [
+      {
+        "name": "corn?help [group]",
+        "value": "Gives a list of cmds for that group. Leave group empty to get a list of groups."
+      }
+    ],
+    "footer": {
+      "text": "little bitch"
+    }
+}

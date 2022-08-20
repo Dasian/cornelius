@@ -1,0 +1,30 @@
+{
+    "type": "rich",
+    "title": "You need help with templates you little bitch?",
+    "description": "These cmds load/create message templates. Templates allow you to keep a message stored on the server. Changes won't be applied to a template unless saved to the server.",
+    "color": 12256499,
+    "thumbnail": {
+      "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"
+    }, 
+    "fields": [
+      {
+        "name": "corn?templates",
+        "value": "Shows all saved templates with their name."
+      },
+      {
+        "name": "corn?load [name]",
+        "value": "Loads a template from the server and makes it your current message."
+      },
+      {
+        "name": "corn?save [name]",
+        "value": "Saves the current message as a template to the server with the given name. Spaces are allowed in the name. Saving a template with a name that already exists will overwrite that template."
+      },
+      {
+        "name": "corn?delete [name]",
+        "value": "Deletes a template from the server with a given name."
+      }
+    ],
+    "footer": {
+      "text": "little bitch"
+    }
+}

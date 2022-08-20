@@ -1,0 +1,50 @@
+{
+    "type": "rich",
+    "title": "You need help with attributes you little bitch?",
+    "description": "This is a list of all (working) embedded msg attributes to be used while editing.\nAttributes that are grouped (i.e. group-[attr1/attr2/attr3] are separate attributes to be used as group-attr1, group-attr2, group-attr3, and so on.\nFor example, footer-[text/icon_url] is two separate attributes; footer-text and footer-icon_url.",
+    "color": 12256499,
+    "thumbnail": {
+      "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"
+    }, 
+    "fields": [
+      {
+        "name": "title",
+        "value": "The title of the message."
+      },
+      {
+        "name": "color",
+        "value": "The color of the message. Use hex or numbers."
+      },
+      {
+        "name": "description",
+        "value": "Text under the title."
+      },
+      {
+        "name": "title-url",
+        "value": "URL to redirect to if title is clicked."
+      },
+      {
+        "name": "author-[name/url/icon_url]",
+        "value": "Puts the author's name above the title. Adding a url makes it clickable and an icon_url includes the image at that url."
+      },
+      {
+        "name": "footer-[text/icon_url]",
+        "value": "Puts the text/icon from url at the bottom of the message."
+      },
+      {
+        "name": "image-[url/proxy_url/height/width]",
+        "value": "Puts the image/gif at a url in the body of the message. The height and width can also be specified."
+      },
+      {
+        "name": "thumbnail-[url/proxy_url/height/width]",
+        "value": "Puts the image/gif at a URL in the thumbnail (top right) of a msg. The height and width can also be specified."
+      },
+      {
+        "name": "video-[url/height/width]",
+        "value": "Puts the video in the body of the message. The height and width can also be specified."
+      }
+    ],
+    "footer": {
+      "text": "little bitch"
+    }
+}
