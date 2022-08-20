@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # preset templates? Definitely keep bot_embeds
-# templates/
+templates/
