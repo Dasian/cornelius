@@ -1,0 +1,26 @@
+{
+    "type": "rich",
+    "title": "You need help editing you little bitch?",
+    "description": "These cmds create and edit embedded messages.",
+    "color": 12256499,
+    "thumbnail": {
+      "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"
+    }, 
+    "fields": [
+      {
+        "name": "corn?new",
+        "value": "Create a new embedded message."
+      },
+      {
+        "name": "corn?add [attribute] [value]",
+        "value": "Adds/updates the specified attribute with a specific value to the currernt message.\nUse corn?help attributes for a list of all attributes."
+      },
+      {
+        "name": "corn?remove [attribute]",
+        "value": "Removes the specified attribute from the current message."
+      }
+    ],
+    "footer": {
+      "text": "little bitch"
+    }
+}

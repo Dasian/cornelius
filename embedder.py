@@ -100,7 +100,6 @@ def add(msg):
 
 # removes content from the embedded message
 # returns true on success, false otherwise
-# TODO remove nested attributes
 def remove(msg):
   # verification/init
   print("Removing attribute")
@@ -178,6 +177,7 @@ def load(msg):
 
 # save the current embedded message as a template
 # second arg should be templatename, no path/extension
+# allows for names with spaces
 def save(msg):
   # verification
   print("Saving Template")
@@ -211,7 +211,8 @@ def delete(msg):
     return False
   return True
 
-# returns the second arg of an input as a continuous string
+# (helper) returns the second arg of an input as a continuous string
+# required since template names allow for spaces
 def second_arg(msg):
   words = msg.split(' ')
   s = words[1]
@@ -240,8 +241,30 @@ def channels(list):
   return e
   
 # returns embedder help functionality
-def help():
-  f = open('bot_embeds/help.json', 'r')
+'''
+    corn?help [group]
+
+    empty - list all help groups with desc of each
+    all - list values of every group  in one message (original implementation)
+    edit - new, preview, add/set, remove
+    publish - publish, channels
+    template - templates, load, save, delete
+    attributes - all attributes, single and grouped
+    misc - help, example
+'''
+def help(group):
+
+  valid_groups = ['all', 'edit', 'publish', 'templates', 'attributes', 'single_attributes', 
+  'grouped_attributes', 'misc']
+  
+  help_path = 'bot_embeds/help-'
+  if group in valid_groups:
+    help_path += group + '.json'
+  else:
+    # empty or invalid
+    help_path = 'bot_embeds/help.json'
+
+  f = open(help_path, 'r')
   help = json.load(f).copy()
   f.close()
   return discord.Embed.from_dict(help)

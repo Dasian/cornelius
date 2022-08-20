@@ -1,0 +1,38 @@
+{
+    "type": "rich",
+    "title": "You need help you little bitch?",
+    "description": "yeah fuck you",
+    "color": 12256499,
+    "thumbnail": {
+      "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"
+    }, 
+    "fields": [
+      {
+        "name": "Misc:",
+        "value": "corn?help - displays this message"
+      },
+      {
+        "name": "Editing Commands",
+        "value": "corn?new - start new embedded message\ncorn?preview - view a preview of the message\ncorn?add [attribute] [value]- adds/updates attribute to the current msg \ncorn?remove [attribute] - removes attribute from the current msg"
+      },
+      {
+        "name": "Template Commands",
+        "value": "corn?templates - shows the saved embedded messages with their name\ncorn?load [name]- loads a saved embedded message as the current message\ncorn?save [name]- saves the embedded message on the server, for future use"
+      },
+      {
+        "name": "Publishing Commands",
+        "value": "corn?channels - get a list of all channel_ids you can post to\ncorn?publish [channel_id] - publishes the current msg to the channel_id"
+      },
+      {
+        "name": "Single Attributes",
+        "value": "title - text \ncolor - hex\ndescription - text\ntitle-url - url\ntype - text \n  Possible values for type: rich, image, video, gifv, article, link"
+      },
+      {
+        "name": "Grouped Attributes",
+        "value": "author-[name/url/icon_url] - text, url, url\nfields-[name/value/inline] - text, text, True/False; Not implemented yet srry\nfooter-[text/icon_url] - text, url \nimage-[url/proxy_url/width/height] - url, url, number\nthumbnail-[url/proxy_url/width/height] - url, url, number, number\nvideo-[url/width/height] - url, number, number"
+      }
+    ],
+    "footer": {
+      "text": "little bitch"
+    }
+}

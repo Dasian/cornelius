@@ -1,0 +1,22 @@
+{
+    "type": "rich",
+    "title": "You need help publishing you little bitch?",
+    "description": "These cmds allow you to post the current msg to a channel.",
+    "color": 12256499,
+    "thumbnail": {
+      "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"
+    }, 
+    "fields": [
+      {
+        "name": "corn?channels",
+        "value": "Get a list of all channel_ids you can post to."
+      },
+      {
+        "name": "corn?publish [channel_id]",
+        "value": "Publish the current msg to the channel_id. Requires confirmation."
+      }
+    ],
+    "footer": {
+      "text": "little bitch"
+    }
+}
