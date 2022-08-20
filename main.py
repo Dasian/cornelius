@@ -15,7 +15,7 @@ import server_cmds
 
 
 # global vars
-cmd_start = '!' # CHANGE THIS BEFORE MERGING WITH MAIN
+cmd_start = 'corn?' # change this at will bro
 server_prefix = ['help', 'hey']
 admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels']
 admins = []
