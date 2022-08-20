@@ -10,39 +10,47 @@ import datetime
 from dotenv import load_dotenv
 # local files
 import embedder
-import server_bot
+import admin_cmds
+import server_cmds
 
-# secrets
-load_dotenv()
-TOKEN = os.environ['TOKEN']
-PERMS = os.environ['PERMS']
-NUM_ADMINS = int(os.environ['NUM_ADMINS'])
+
+# global vars
+cmd_start = '!' # CHANGE THIS BEFORE MERGING WITH MAIN
+server_prefix = ['help', 'hey']
+admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels']
 admins = []
-for i in range(0, NUM_ADMINS):
-  s = "ADMIN" + str(i)
-  admins.append(int(os.environ[s]))
-
-# command list
-cmd_start = 'corn?'
-server_cmds = ['help', 'hey']
-admin_cmds =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels']
-for i in range(len(server_cmds)):
-  server_cmds[i] = cmd_start + server_cmds[i]
-for i in range(len(admin_cmds)):
-  admin_cmds[i] = cmd_start + admin_cmds[i]
-publish_channels = []
-
+confirmation = False
+publish_channel = None
 # Connect to client (all intents enabled but could specify if you care)
 client = discord.Client(intents=discord.Intents.all())
 
-# Run when the bot is starting up (startup)
+# guess what this function is
+def main():
+  # retrieve secrets
+  global admins
+  load_dotenv()
+  TOKEN = os.environ['TOKEN']
+  PERMS = os.environ['PERMS']
+  NUM_ADMINS = int(os.environ['NUM_ADMINS'])
+  for i in range(0, NUM_ADMINS):
+    s = "ADMIN" + str(i)
+    admins.append(int(os.environ[s]))
+
+  # generate cmd prefix list
+  global admin_prefix, server_prefix, cmd_start
+  for i in range(len(server_prefix)):
+    server_prefix[i] = cmd_start + server_prefix[i]
+  for i in range(len(admin_prefix)):
+    admin_prefix[i] = cmd_start + admin_prefix[i]
+
+  # Run client
+  client.run(TOKEN)
+
+
+# Run when the bot is starting up
 @client.event
 async def on_ready():
   print("Logged in as {0.user}".format(client),' on ', datetime.datetime.now())
-  # generate channels for publishing; can be updated by calling corn?channels
-  for server in client.guilds:
-    for channel in server.text_channels:
-      publish_channels.append((server, channel))
 
 # Run whenever a message is received in any channel/dm (commands)
 @client.event
@@ -62,108 +70,66 @@ async def on_message(message):
   print()
 
   # Admin Commands
-  # Embed creation commands
+  # admin is recognized and cmds are sent through pm
   if message.author.id in admins and not message.guild:
     print("*************ADMIN COMMAND*************")
     print("User:", message.author)
     print("Command:",message.content)
-    try:
-      if message.content.startswith(admin_cmds[0]): # help
-        help = embedder.help()
-        await message.channel.send(embed = help)
-      elif message.content.startswith(admin_cmds[1]): # new
-        embedder.new()
-        await message.channel.send("Current message:", embed=embedder.preview())
-      elif message.content.startswith(admin_cmds[2]): # preview
-        await message.channel.send("Current message:", embed=embedder.preview())
-      elif message.content.startswith(admin_cmds[3]): # publish
-        # show what will be published
-        e = embedder.preview()
-        await message.channel.send("Message to Publish:",embed = e)
 
-        # show what channel it will be published to
-        words = message.content.split(' ')
-        id = int(words[1])
-        s = "Server: " + publish_channels[id][0].name
-        channel = publish_channels[id][1]
-        c = " Channel: " + channel.name
-        msg = "Publishing to " + s  + c
-        await message.channel.send(msg)
-        
-        # confirmation
-
-        # publishing
-        await channel.send(embed=e)
-      elif message.content.startswith(admin_cmds[10]): # channels
-        # generate a list of accessible channels and associated servers
-        publish_channels.clear()
-        for server in client.guilds:       
-          for channel in server.text_channels:
-            publish_channels.append((server, channel))
-        # print list of accessible servers and channels
-        await message.channel.send(embed = embedder.channels(publish_channels))
-      elif message.content.startswith(admin_cmds[4]): # add
-        if embedder.add(message.content):
-          msg = embedder.preview()
-          await message.channel.send(embed=msg)
-        else:
-          await message.channel.send("Unable to add content. Make sure the property exists")
-      elif message.content.startswith(admin_cmds[5]): # remove
-        if embedder.remove(message.content):
-          await message.channel.send("Current message:", embed=embedder.preview())
-        else:
-          await message.channel.send("Unable to remove content. Make sure the property exists")
-      elif message.content.startswith(admin_cmds[6]): # templates
-        temps = embedder.templates()
-        for t in temps:
-          n = t[0]
-          n = n[11:n.find('.json')]
-          name = "Name: " + n
-          await message.channel.send(name, embed=t[1])
-        if temps == []:
-          await message.channel.send("There are no saved templates :((")
-      elif message.content.startswith(admin_cmds[7]): # load
-        if embedder.load(message.content):
-          await message.channel.send("Current message:", embed=embedder.preview())
-        else:
-          await message.channel.send("Couldn't load template. Is the name correct?")
-      elif message.content.startswith(admin_cmds[8]): # save
-        if embedder.save(message.content):
-          await message.channel.send("Saved message as template")
-        else:
-          await message.channel.send("Couldn't save message as template, contact ya boi")
-      elif message.content.startswith(admin_cmds[9]): # delete
-          if embedder.delete(message.content):
-            await message.channel.send("Successfully deleted template")
-          else:
-            await message.channel.send("Couldn't delete template. Is the name correct?")
+    # publish confirmation
+    global confirmation, publish_channel
+    if confirmation:
+      if message.content.lower() == 'yes':
+        await message.channel.send('poggies')
+        await publish_channel.send(embed=embedder.preview())
       else:
-        img_url = 'https://gifimage.net/wp-content/uploads/2017/07/angry-anime-gif-18.gif'
-        title_url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        await message.channel.send('stop wasting my time bihtc')
+      confirmation = False
+      return
 
-        desc = '"' + message.content + '" isn\'t a command idiot lmao'
-        e = discord.Embed(title='You sussy baka bitch.', description=desc, color=0xf30404, url=title_url)
-        e.set_thumbnail(url = img_url)
-        e.set_footer(text='type corn?help for help tho')
-        await message.channel.send(embed=e)
+    # generate and publish embedded messages
+    try:
+      if message.content.startswith(admin_prefix[0]): # help
+        await admin_cmds.help(message)
+      elif message.content.startswith(admin_prefix[1]): # new
+        await admin_cmds.new(message)
+      elif message.content.startswith(admin_prefix[2]): # preview
+        await admin_cmds.preview(message)
+      elif message.content.startswith(admin_prefix[3]): # publish
+        confirmation, publish_channel = await admin_cmds.publish(message, client)
+      elif message.content.startswith(admin_prefix[10]): # channels
+        await admin_cmds.show_channels(message, client)
+      elif message.content.startswith(admin_prefix[4]): # add
+        await admin_cmds.add(message)
+      elif message.content.startswith(admin_prefix[5]): # remove
+        await admin_cmds.remove(message)
+      elif message.content.startswith(admin_prefix[6]): # templates
+        await admin_cmds.templates(message)
+      elif message.content.startswith(admin_prefix[7]): # load
+        await admin_cmds.load(message)
+      elif message.content.startswith(admin_prefix[8]): # save
+        await admin_cmds.save(message)
+      elif message.content.startswith(admin_prefix[9]): # delete
+        await admin_cmds.delete(message)
+      else:
+        await admin_cmds.invalid(message)
     except Exception as e:
       print("Exception:", e)
-      await message.channel.send("Something went wrong :((( plz create/load a new message")
+      await message.channel.send("Something went wrong :(((")
+      await message.channel.send("here some nerd shit: " + str(e))
       
   # Server commands
   elif message.guild:
     # send a random message anywhere
-    if message.content.startswith(server_cmds[0]): # help
-      help = server_bot.help()
-      await message.channel.send(help)
-    elif message.content.startswith(server_cmds[1]): # hey
-      msg = server_bot.random_message()
-      await message.channel.send(msg)
+    if message.content.startswith(server_prefix[0]): # help
+      await server_cmds.help(message)
+    elif message.content.startswith(server_prefix[1]): # hey
+      await server_cmds.hey(message)
   
   # Random patron dm
   else:
-    await message.channel.send("I'm a bot, not Valentina")
-    await message.channel.send(server_bot.random_message())
+    await message.channel.send("why we talk in secret?")
+    await message.channel.send(server_cmds.random_message())
     
-# Run client
-client.run(TOKEN)
+if __name__ == '__main__':
+  main()
