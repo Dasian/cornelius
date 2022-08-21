@@ -14,6 +14,10 @@
       {
         "name": "corn?publish [channel_id]",
         "value": "Publish the current msg to the channel_id. Requires confirmation."
+      }, 
+      {
+        "name": "corn?speak [channel_id] [message]",
+        "value": "Sends a normal discord message to the specified chanel. Requires confirmation."
       }
     ],
     "footer": {

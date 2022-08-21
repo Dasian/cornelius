@@ -95,14 +95,19 @@ async def publish(message, client):
         await message.channel.send('usage: corn?publish [channel_id]')
         await show_channels(message, client)
         return (False, -1)
-    id = int(words[1])
+    try:
+        id = int(words[1])
+    except:
+        await message.channel.send('invalid channel_id')
+        await show_channels(message, client)
+        return (False, -1) 
+    accessible_channels = get_channels(client)
     if id >= len(accessible_channels) or id < 0:
         await message.channel.send('invalid channel_id')
         await show_channels(message, client)
         return (False, -1)
 
     # get publish information
-    accessible_channels = get_channels(client)
     sname = accessible_channels[id][0].name
     s = "\nServer: " + sname
     publish_channel = accessible_channels[id][1]
@@ -117,6 +122,47 @@ async def publish(message, client):
     # ask for confirmation (handled in on_message)
     await message.channel.send("Is this information correct? (yes/no)")
     return (True, publish_channel)
+
+# post normal message 
+# returns tuple (speak_confirmation, publish_channel, speak_msg)
+async def speak(message, client):
+    # verify usage
+    words = message.content.split(' ')
+    if len(words) < 3:
+        await message.channel.send('usage: corn?speak [channel_id] [message]')
+        await show_channels(message, client)
+        return (False, -1, None)
+    try:
+        id = int(words[1])
+    except:
+        await message.channel.send('invalid channel_id')
+        await show_channels(message, client)
+        return (False, -1, None) 
+    accessible_channels = get_channels(client)
+    if id >= len(accessible_channels) or id < 0:
+        await message.channel.send('invalid channel_id')
+        await show_channels(message, client)
+        return (False, -1, None)
+
+    # get publish information
+    sname = accessible_channels[id][0].name
+    s = "\nServer: " + sname
+    publish_channel = accessible_channels[id][1]
+    c = "\nChannel: " + publish_channel.name
+    msg_location = s  + c
+
+    # get speak msg (every word after first 2)
+    speak_msg = ''
+    for w in words[2:]:
+        speak_msg += w + ' '
+
+    # show message to publish
+    await message.channel.send("Message to Publish: " + speak_msg)
+    await message.channel.send(msg_location)
+
+    # confirmation (handled in onmessage)
+    await message.channel.send("Is this information correct? (yes/no)")
+    return (True, publish_channel, speak_msg)
 
 '''
     Misc
