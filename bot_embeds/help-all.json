@@ -21,7 +21,7 @@
       },
       {
         "name": "Publishing Commands",
-        "value": "corn?channels - get a list of all channel_ids you can post to\ncorn?publish [channel_id] - publishes the current msg to the channel_id"
+        "value": "corn?channels - get a list of all channel_ids you can post to\ncorn?publish [channel_id] - publishes the current msg to the channel_id\ncorn?speak [channel_id] [message] - send a normal discord message to the channel id"
       },
       {
         "name": "Single Attributes",

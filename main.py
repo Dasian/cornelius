@@ -17,9 +17,11 @@ import server_cmds
 # global vars
 cmd_start = '!' # CHANGE THIS BEFORE MERGING WITH MAIN
 server_prefix = ['help', 'hey']
-admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels']
+admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels', 'speak']
 admins = []
-confirmation = False
+publish_confirmation = False
+speak_confirmation = False
+speak_msg = ''
 publish_channel = None
 # Connect to client (all intents enabled but could specify if you care)
 client = discord.Client(intents=discord.Intents.all())
@@ -77,15 +79,27 @@ async def on_message(message):
     print("Command:",message.content)
 
     # publish confirmation
-    global confirmation, publish_channel
-    if confirmation:
+    global publish_confirmation, publish_channel
+    if publish_confirmation:
       if message.content.lower() == 'yes':
         await message.channel.send('poggies')
         await publish_channel.send(embed=embedder.preview())
       else:
         await message.channel.send('stop wasting my time bihtc')
-      confirmation = False
+      publish_confirmation = False
       return
+
+    # sepak confirmation
+    global speak_confirmation, speak_msg
+    if speak_confirmation:
+      if message.content.lower() == 'yes':
+        await message.channel.send('poggies')
+        await publish_channel.send(speak_msg)
+      else:
+        await message.channel.send('stop wasting my time bihtc')
+      speak_confirmation = False
+      return
+
 
     # generate and publish embedded messages
     try:
@@ -96,7 +110,7 @@ async def on_message(message):
       elif message.content.startswith(admin_prefix[2]): # preview
         await admin_cmds.preview(message)
       elif message.content.startswith(admin_prefix[3]): # publish
-        confirmation, publish_channel = await admin_cmds.publish(message, client)
+        publish_confirmation, publish_channel = await admin_cmds.publish(message, client)
       elif message.content.startswith(admin_prefix[10]): # channels
         await admin_cmds.show_channels(message, client)
       elif message.content.startswith(admin_prefix[4]): # add
@@ -111,6 +125,8 @@ async def on_message(message):
         await admin_cmds.save(message)
       elif message.content.startswith(admin_prefix[9]): # delete
         await admin_cmds.delete(message)
+      elif message.content.startswith(admin_prefix[11]): # speak
+        speak_confirmation, publish_channel, speak_msg = await admin_cmds.speak(message, client)
       else:
         await admin_cmds.invalid(message)
     except Exception as e:
