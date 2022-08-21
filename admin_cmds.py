@@ -164,6 +164,25 @@ async def speak(message, client):
     await message.channel.send("Is this information correct? (yes/no)")
     return (True, publish_channel, speak_msg)
 
+# (helper) returns a list of tuples (server, role obj)
+# global mapping of rolenames to ids?
+def get_roles(client):
+    roles = []
+    for server in client.guilds:       
+        for role in server.roles:
+            roles.append((server, role))
+    return roles
+
+# prints a list of pingable roles
+async def show_roles(message, client):
+    roles = get_roles(client)
+    await message.channel.send(embedder.role_list)
+    return
+
+# usage: corn?ping [role] [channel_id] [msg?]
+async def ping(message):
+    return
+
 '''
     Misc
 '''

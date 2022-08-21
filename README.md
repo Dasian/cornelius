@@ -5,6 +5,5 @@ Custom bot (Cornelius) for VTuber Valentina Chisei
 - Create, save, and send custom embedded messages controlled through private messages
 
 # TODO (ordered)
-- Send regular messages
 - Add social media notification integration
-- Custom role with cooldown
+- Chat revival role with cooldown
