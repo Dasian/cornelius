@@ -176,12 +176,67 @@ def get_roles(client):
 # prints a list of pingable roles
 async def show_roles(message, client):
     roles = get_roles(client)
-    await message.channel.send(embedder.role_list)
+    await message.channel.send(embedder.role_list(roles))
     return
 
 # usage: corn?ping [role] [channel_id] [msg?]
-async def ping(message):
-    return
+# posts an embedded msg in a channel while pinging a role
+# returns a tuple (ping_conf, publish_id, ping_msg)
+async def ping(message, client):
+    
+    # verification/parse
+    words = message.content.split(' ')
+    if len(words) < 4:
+        await message.channel.send('usage: corn?ping [role] [channel_id] [message]')
+        await show_channels(message, client)
+        return (False, -1, None)
+
+    # publish channel
+    try:
+        id = int(words[2])
+    except:
+        await message.channel.send('invalid channel_id')
+        await show_channels(message, client)
+        return (False, -1, None) 
+    accessible_channels = get_channels(client)
+    if id >= len(accessible_channels) or id < 0:
+        await message.channel.send('invalid channel_id')
+        await show_channels(message, client)
+        return (False, -1, None)
+    
+    # TODO fix this (target role)
+    # get_roles returns (server, role_obg)
+    sname = accessible_channels[id][0].name
+    roles = get_roles(client)
+    role = words[1]
+    if role not in roles:
+        await message.channel.send('invalid role name')
+        await show_roles(message, client)
+        return (False, -1, None)
+    
+    # ping msg
+    ping_msg = ''
+    for w in words[4:]:
+        ping_msg += w + ' '
+    
+    # get publish information
+    sname = accessible_channels[id][0].name
+    s = "\nServer: " + sname
+    publish_channel = accessible_channels[id][1]
+    c = "\nChannel: " + publish_channel.name
+    msg_location = s  + c
+    
+    # TODO create embed
+    # maybe have some type of template here to be matched with diff roles
+    ping_embed = embedder.preview()
+
+    # show publish info
+    await message.channel.send("Message to Publish:",embed=ping_embed)
+    await message.channel.send(msg_location)
+
+    # confirmation (handled in onmessage)
+    await message.channel.send("Is this information correct? (yes/no)")
+    return (True, publish_channel, ping_embed)
 
 '''
     Misc

@@ -113,7 +113,8 @@ def remove(msg):
   if attr in attributes:
     if attr == 'title-url':
       attr = 'url'
-    embed.pop(attr)
+    if attr in embed.keys():
+      embed.pop(attr)
     return True
 
   # nested embedded attributes
@@ -242,16 +243,16 @@ def channels(list):
 
 # returns an embedded message containg a list of pingable roles
 def role_list(list):
-  print("Generating accessible channels")
+  print("Generating pingable roles")
   e = discord.Embed(title="Pingable Roles", description="List of roles that I can ping", color = 0x55FDF9)
-  e.set_footer(text="run corn?ping [role] [channel_id] to publish the current embedded message to that channel")
+  e.set_footer(text="run corn?ping [role] [channel_id] [msg?] to publish the current embedded message to that channel")
   id = 0
   while id < len(list):
-    channels = ''
+    roles = ''
     server = list[id][0]
     while id < len(list) and list[id][0] == server:
-      channel = list[id][1]
-      channels += 'ID: ' + str(id) + ' | Channel: ' + str(channel) + '\n'
+      role = list[id][1]
+      roles += 'Server: ' + str(id) + ' | Role: ' + role.name + '\n'
       id += 1
     # create a field where the title is the server name 
     # and the contents are the accessible channels with their id

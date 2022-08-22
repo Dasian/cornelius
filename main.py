@@ -17,11 +17,13 @@ import server_cmds
 # global vars
 cmd_start = 'corn?' # change this at will bro
 server_prefix = ['help', 'hey']
-admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels', 'speak']
+admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels', 'speak', 'ping']
 admins = []
 publish_confirmation = False
 speak_confirmation = False
+ping_conf = False
 speak_msg = ''
+ping_embed = None
 publish_channel = None
 # Connect to client (all intents enabled but could specify if you care)
 client = discord.Client(intents=discord.Intents.all())
@@ -89,15 +91,26 @@ async def on_message(message):
       publish_confirmation = False
       return
 
-    # sepak confirmation
+    # speak confirmation
     global speak_confirmation, speak_msg
     if speak_confirmation:
       if message.content.lower() == 'yes':
-        await message.channel.send('poggies')
+        await message.channel.send('epic')
         await publish_channel.send(speak_msg)
       else:
-        await message.channel.send('stop wasting my time bihtc')
+        await message.channel.send('i will end you, whore')
       speak_confirmation = False
+      return
+
+    # ping confirmation
+    global ping_conf, ping_embed
+    if ping_conf:
+      if message.content.lower() == 'yes':
+        await message.channel.send('cum')
+        await publish_channel.send(embed=ping_embed)
+      else:
+        await message.channel.send('get some bitches')
+      ping_conf = False
       return
 
 
@@ -127,6 +140,8 @@ async def on_message(message):
         await admin_cmds.delete(message)
       elif message.content.startswith(admin_prefix[11]): # speak
         speak_confirmation, publish_channel, speak_msg = await admin_cmds.speak(message, client)
+      elif message.content.startwswith(admin_prefix[12]): # ping
+        ping_conf, publish_channel, ping_embed = await admin_cmds.ping(message, client)
       else:
         await admin_cmds.invalid(message)
     except Exception as e:
