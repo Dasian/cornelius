@@ -15,7 +15,7 @@ import server_cmds
 
 
 # global vars
-cmd_start = '!' # change this at will bro
+cmd_start = 'corn?' # change this at will bro
 server_prefix = ['help', 'hey']
 admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels', 'speak', 'roles', 'ping']
 admins = []
