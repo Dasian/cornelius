@@ -40,8 +40,8 @@ random.seed(int(time.time()))
 # sends a help message for server commands
 async def help(message):
   help = '''
-!help - Displays this message
-!hey - Get a random val quote
+corn?help - Displays this message
+corn?hey - Get a random val quote
   '''
   await message.channel.send(help)
 
