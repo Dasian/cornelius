@@ -2,8 +2,10 @@
 Custom bot (Cornelius) for VTuber Valentina Chisei
 
 # Features
-- Create, save, and send custom embedded messages controlled through private messages
+- All privileged commands are controlled through a pm with a recognized admin
+- Create, save, and send custom embedded
+- Send regular custom messages
+- Ping roles with with an embedded message
 
 # TODO (ordered)
-- Add social media notification integration
 - Chat revival role with cooldown
