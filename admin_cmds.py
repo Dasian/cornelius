@@ -200,12 +200,12 @@ async def ping(message, client):
     except:
         await message.channel.send('invalid channel_id')
         await show_channels(message, client)
-        return (False, -1, None) 
+        return (False, -1, -1, None) 
     accessible_channels = get_channels(client)
     if id >= len(accessible_channels) or id < 0:
         await message.channel.send('invalid channel_id')
         await show_channels(message, client)
-        return (False, -1, None)
+        return (False, -1, -1, None)
     
     # create a list of roles for a given server
     sname = accessible_channels[id][0].name
@@ -225,7 +225,7 @@ async def ping(message, client):
     if target_role is None:
         await message.channel.send('invalid role name for server "' + sname +'"')
         await show_roles(message, client)
-        return (False, -1, None)
+        return (False, -1, -1, None)
 
     # get role id
     rid = target_role.id
