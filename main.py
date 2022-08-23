@@ -15,14 +15,15 @@ import server_cmds
 
 
 # global vars
-cmd_start = 'corn?' # change this at will bro
+cmd_start = '!' # change this at will bro
 server_prefix = ['help', 'hey']
-admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels', 'speak', 'ping']
+admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels', 'speak', 'roles', 'ping']
 admins = []
 publish_confirmation = False
 speak_confirmation = False
 ping_conf = False
 speak_msg = ''
+role_id = 0
 ping_embed = None
 publish_channel = None
 # Connect to client (all intents enabled but could specify if you care)
@@ -103,11 +104,11 @@ async def on_message(message):
       return
 
     # ping confirmation
-    global ping_conf, ping_embed
+    global ping_conf, ping_embed, role_id
     if ping_conf:
       if message.content.lower() == 'yes':
         await message.channel.send('cum')
-        await publish_channel.send(embed=ping_embed)
+        await publish_channel.send('<@&'+str(role_id)+'>',embed=ping_embed)
       else:
         await message.channel.send('get some bitches')
       ping_conf = False
@@ -140,8 +141,10 @@ async def on_message(message):
         await admin_cmds.delete(message)
       elif message.content.startswith(admin_prefix[11]): # speak
         speak_confirmation, publish_channel, speak_msg = await admin_cmds.speak(message, client)
-      elif message.content.startwswith(admin_prefix[12]): # ping
-        ping_conf, publish_channel, ping_embed = await admin_cmds.ping(message, client)
+      elif message.content.startswith(admin_prefix[12]): # roles
+        await admin_cmds.show_roles(message, client)
+      elif message.content.startswith(admin_prefix[13]): # ping
+        ping_conf, publish_channel, role_id, ping_embed = await admin_cmds.ping(message, client)
       else:
         await admin_cmds.invalid(message)
     except Exception as e:

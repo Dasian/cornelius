@@ -246,17 +246,18 @@ def role_list(list):
   print("Generating pingable roles")
   e = discord.Embed(title="Pingable Roles", description="List of roles that I can ping", color = 0x55FDF9)
   e.set_footer(text="run corn?ping [role] [channel_id] [msg?] to publish the current embedded message to that channel")
+  
   id = 0
   while id < len(list):
     roles = ''
     server = list[id][0]
     while id < len(list) and list[id][0] == server:
       role = list[id][1]
-      roles += 'Server: ' + str(id) + ' | Role: ' + role.name + '\n'
+      roles += 'Role: ' + role.name + '\n'
       id += 1
     # create a field where the title is the server name 
     # and the contents are the accessible channels with their id
-    e.add_field(name="Server: "+str(server), value=channels, inline=False)
+    e.add_field(name="Server: "+str(server), value=roles, inline=False)
   return e
 
 

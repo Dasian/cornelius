@@ -18,6 +18,14 @@
       {
         "name": "corn?speak [channel_id] [message]",
         "value": "Sends a normal discord message to the specified chanel. Requires confirmation."
+      },
+      {
+        "name": "corn?roles",
+        "value": "Get a list of all roles you can ping."
+      },
+      {
+        "name": "corn?ping [role_name] [channel_id] [ping_msg]",
+        "value": "Ping a role with a particular message. Social media pings have a unique embed color."
       }
     ],
     "footer": {

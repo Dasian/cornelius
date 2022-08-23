@@ -3,6 +3,7 @@ Commands that are run by admins from the bot dms
 Editing messages, publishing messages, misc
 '''
 
+from dis import disco
 import discord
 import embedder
 
@@ -167,6 +168,7 @@ async def speak(message, client):
 # (helper) returns a list of tuples (server, role obj)
 # global mapping of rolenames to ids?
 def get_roles(client):
+    print('get_roles()')
     roles = []
     for server in client.guilds:       
         for role in server.roles:
@@ -175,8 +177,9 @@ def get_roles(client):
 
 # prints a list of pingable roles
 async def show_roles(message, client):
+    print('show_roles()')
     roles = get_roles(client)
-    await message.channel.send(embedder.role_list(roles))
+    await message.channel.send(embed=embedder.role_list(roles))
     return
 
 # usage: corn?ping [role] [channel_id] [msg?]
@@ -204,19 +207,34 @@ async def ping(message, client):
         await show_channels(message, client)
         return (False, -1, None)
     
-    # TODO fix this (target role)
-    # get_roles returns (server, role_obg)
+    # create a list of roles for a given server
     sname = accessible_channels[id][0].name
     roles = get_roles(client)
-    role = words[1]
-    if role not in roles:
-        await message.channel.send('invalid role name')
+    # list of tuples with the correct server name
+    roles = filter(lambda r: r[0].name == sname, roles)
+    # remove server name from tuples
+    roles = [r[1] for r in roles]
+    rname = words[1]
+    target_role = None
+
+    for role in roles:
+        if role.name.lower() == rname.lower():
+            target_role = role
+            break
+
+    if target_role is None:
+        await message.channel.send('invalid role name for server "' + sname +'"')
         await show_roles(message, client)
         return (False, -1, None)
+
+    # get role id
+    rid = target_role.id
+    print(roles)
+    print(rid)
     
-    # ping msg
+    # ping msg 
     ping_msg = ''
-    for w in words[4:]:
+    for w in words[3:]:
         ping_msg += w + ' '
     
     # get publish information
@@ -226,17 +244,23 @@ async def ping(message, client):
     c = "\nChannel: " + publish_channel.name
     msg_location = s  + c
     
-    # TODO create embed
-    # maybe have some type of template here to be matched with diff roles
-    ping_embed = embedder.preview()
+    # create embed
+    color_map = {'twitter': 0x00acee, 'patreon': 0xff424D, 'youtube': 0xff0000, 'tiktok': 0xff0050}
+    if role.name.lower() in color_map.keys():
+        color = color_map[role.name.lower()]
+    else:
+        color = 0x36393F
+    ping_embed = discord.Embed(color=color, description=ping_msg)
 
     # show publish info
-    await message.channel.send("Message to Publish:",embed=ping_embed)
+    await message.channel.send("Preview:")
+
+    await message.channel.send('@' + target_role.name + '', embed=ping_embed)
     await message.channel.send(msg_location)
 
     # confirmation (handled in onmessage)
     await message.channel.send("Is this information correct? (yes/no)")
-    return (True, publish_channel, ping_embed)
+    return (True, publish_channel, rid, ping_embed)
 
 '''
     Misc
