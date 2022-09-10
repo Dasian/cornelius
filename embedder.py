@@ -227,6 +227,7 @@ def second_arg(msg):
 def channels(list):
   print("Generating accessible channels")
   e = discord.Embed(title="Accessible Channels", description="List of channels that I'm able to publish to", color = 0x55FDF9)
+  MAX_FIELD_LEN = 1024
   e.set_footer(text="run corn?publish [channel_id] to publish the current embedded message to that channel")
   id = 0
   while id < len(list):
@@ -234,11 +235,19 @@ def channels(list):
     server = list[id][0]
     while id < len(list) and list[id][0] == server:
       channel = list[id][1]
-      channels += 'ID: ' + str(id) + ' | Channel: ' + str(channel) + '\n'
+      new_channel = 'ID: ' + str(id) + ' | Channel: ' + str(channel) + '\n'
+      
+      if len(channels) + len(new_channel) < MAX_FIELD_LEN:
+        channels += new_channel
+      else:
+        e.add_field(name="Server: "+str(server), value=channels, inline=False)
+        channels = ''
+      
       id += 1
     # create a field where the title is the server name 
     # and the contents are the accessible channels with their id
-    e.add_field(name="Server: "+str(server), value=channels, inline=False)
+    if channels != '':
+      e.add_field(name="Server: "+str(server), value=channels, inline=False)
   return e
 
 # returns an embedded message containg a list of pingable roles
