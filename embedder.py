@@ -241,7 +241,7 @@ def channels(list):
         channels += new_channel
       else:
         e.add_field(name="Server: "+str(server), value=channels, inline=False)
-        channels = ''
+        channels = new_channel
       
       id += 1
     # create a field where the title is the server name 
