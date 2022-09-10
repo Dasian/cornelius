@@ -217,22 +217,18 @@ async def ping(message, client):
     rname = words[1]
     target_role = None
 
+    # get target role info
     for role in roles:
         if role.name.lower() == rname.lower():
             target_role = role
             break
-
     if target_role is None:
         await message.channel.send('invalid role name for server "' + sname +'"')
         await show_roles(message, client)
         return (False, -1, -1, None)
-
-    # get role id
-    rid = target_role.id
-    print(roles)
-    print(rid)
     
     # ping msg 
+    rid = target_role.id
     ping_msg = ''
     for w in words[3:]:
         ping_msg += w + ' '

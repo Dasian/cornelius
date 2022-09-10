@@ -8,6 +8,7 @@ import os
 import discord
 import datetime
 from dotenv import load_dotenv
+from discord.ext import commands
 # local files
 import embedder
 import admin_cmds
@@ -16,7 +17,7 @@ import server_cmds
 
 # global vars
 cmd_start = 'corn?' # change this at will bro
-server_prefix = ['help', 'hey']
+server_prefix = ['help', 'hey', 'revive']
 admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels', 'speak', 'roles', 'ping']
 admins = []
 publish_confirmation = False
@@ -28,6 +29,8 @@ ping_embed = None
 publish_channel = None
 # Connect to client (all intents enabled but could specify if you care)
 client = discord.Client(intents=discord.Intents.all())
+# bot obj for bot commands
+bot = commands.Bot(command_prefix=cmd_start, intents=discord.Intents.all())
 
 # guess what this function is
 def main():
@@ -159,11 +162,18 @@ async def on_message(message):
       await server_cmds.help(message)
     elif message.content.startswith(server_prefix[1]): # hey
       await server_cmds.hey(message)
+    # elif message.content.startswith(server_prefix[2]): # revive
+    #  await server_cmds.revive(message, client)
   
   # Random patron dm
   else:
     await message.channel.send("why we talk in secret?")
     await message.channel.send(server_cmds.random_message())
     
+@commands.command(name='revive')
+@commands.cooldown(1, 10, commands.BucketType.user)
+async def revive(ctx):
+  await ctx.send('Revive test')
+
 if __name__ == '__main__':
   main()
