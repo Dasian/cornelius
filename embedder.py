@@ -224,6 +224,7 @@ def second_arg(msg):
 # returns an embedded message containing a list of accessible 
 # channels with their respective servers
 # c is an ordered list of (server, channel)
+MAX_FIELD_LEN = 1024
 def channels(list):
   print("Generating accessible channels")
   e = discord.Embed(title="Accessible Channels", description="List of channels that I'm able to publish to", color = 0x55FDF9)
@@ -241,7 +242,7 @@ def channels(list):
         channels += new_channel
       else:
         e.add_field(name="Server: "+str(server), value=channels, inline=False)
-        channels = ''
+        channels = new_channel
       
       id += 1
     # create a field where the title is the server name 
@@ -262,7 +263,14 @@ def role_list(list):
     server = list[id][0]
     while id < len(list) and list[id][0] == server:
       role = list[id][1]
-      roles += 'Role: ' + role.name + '\n'
+      new_role = 'Role: ' + role.name + '\n'
+
+      if len(roles) + len(new_role) < MAX_FIELD_LEN:
+        roles += new_role
+      else:
+        e.add_field(name="Server: "+str(server), value=roles, inline=False)
+        roles = new_role
+        
       id += 1
     # create a field where the title is the server name 
     # and the contents are the accessible channels with their id
