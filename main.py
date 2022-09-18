@@ -5,6 +5,7 @@
 '''
 
 import os
+from random import randint
 import discord
 import datetime
 from dotenv import load_dotenv
@@ -16,7 +17,7 @@ import server_cmds
 
 
 # global vars
-cmd_start = 'corn?' # change this at will bro
+cmd_start = '!' # change this at will bro
 server_prefix = ['help', 'hey', 'revive']
 admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels', 'speak', 'roles', 'ping']
 admins = []
@@ -27,9 +28,8 @@ speak_msg = ''
 role_id = 0
 ping_embed = None
 publish_channel = None
-# Connect to client (all intents enabled but could specify if you care)
-client = discord.Client(intents=discord.Intents.all())
-# bot obj for bot commands
+# bot obj for bot commands (all intents enabled but could specify if you want)
+# extended off of client
 bot = commands.Bot(command_prefix=cmd_start, intents=discord.Intents.all())
 
 # guess what this function is
@@ -52,19 +52,19 @@ def main():
     admin_prefix[i] = cmd_start + admin_prefix[i]
 
   # Run client
-  client.run(TOKEN)
+  bot.run(TOKEN)
 
 
 # Run when the bot is starting up
-@client.event
+@bot.event
 async def on_ready():
-  print("Logged in as {0.user}".format(client),' on ', datetime.datetime.now())
+  print("Logged in as {0.user}".format(bot),' on ', datetime.datetime.now())
 
 # Run whenever a message is received in any channel/dm (commands)
-@client.event
+@bot.event
 async def on_message(message):
   # ignore messages from the bot
-  if message.author == client.user:
+  if message.author == bot.user:
     return
 
   # debug info
@@ -127,9 +127,9 @@ async def on_message(message):
       elif message.content.startswith(admin_prefix[2]): # preview
         await admin_cmds.preview(message)
       elif message.content.startswith(admin_prefix[3]): # publish
-        publish_confirmation, publish_channel = await admin_cmds.publish(message, client)
+        publish_confirmation, publish_channel = await admin_cmds.publish(message, bot)
       elif message.content.startswith(admin_prefix[10]): # channels
-        await admin_cmds.show_channels(message, client)
+        await admin_cmds.show_channels(message, bot)
       elif message.content.startswith(admin_prefix[4]): # add
         await admin_cmds.add(message)
       elif message.content.startswith(admin_prefix[5]): # remove
@@ -143,11 +143,11 @@ async def on_message(message):
       elif message.content.startswith(admin_prefix[9]): # delete
         await admin_cmds.delete(message)
       elif message.content.startswith(admin_prefix[11]): # speak
-        speak_confirmation, publish_channel, speak_msg = await admin_cmds.speak(message, client)
+        speak_confirmation, publish_channel, speak_msg = await admin_cmds.speak(message, bot)
       elif message.content.startswith(admin_prefix[12]): # roles
-        await admin_cmds.show_roles(message, client)
+        await admin_cmds.show_roles(message, bot)
       elif message.content.startswith(admin_prefix[13]): # ping
-        ping_conf, publish_channel, role_id, ping_embed = await admin_cmds.ping(message, client)
+        ping_conf, publish_channel, role_id, ping_embed = await admin_cmds.ping(message, bot)
       else:
         await admin_cmds.invalid(message)
     except Exception as e:
@@ -169,11 +169,39 @@ async def on_message(message):
   else:
     await message.channel.send("why we talk in secret?")
     await message.channel.send(server_cmds.random_message())
-    
-@commands.command(name='revive')
+
+  # allow for other commands from the @bot.command() decorator to run
+  await bot.process_commands(message)
+
+# chat revival command
+# ping a role when the command is run in a server to revive a channel
+# has a cooldown for all users
+@bot.command()
 @commands.cooldown(1, 10, commands.BucketType.user)
 async def revive(ctx):
-  await ctx.send('Revive test')
+  # find the necromancer role
+  # TODO restrict this to the production server
+  rid = None
+  for server in bot.guilds:
+    for role in server.roles:
+      if role.name.lower() == 'necromancer':
+        rid = role.id
+        break
+
+  if rid is None:
+    await ctx.send("Oh fuck i messed up the code somewhere uhh oh fuck my bad")
+
+  revival_msg = '<@&' + str(rid) + '>'
+  await ctx.send(revival_msg)
+
+@bot.event
+async def on_command_error(ctx, error):
+  degrading_msgs = ['Touch some grass', 'Get some bitches']
+  if isinstance(error, commands.CommandOnCooldown):
+    cooldown_msg = 'This cmd is on cooldwon for ' + str(int(error.retry_after)) + ' more seconds'
+    r = randint(0, len(degrading_msgs))
+    cooldown_msg += '\n' + degrading_msgs[r]
+    await ctx.send(cooldown_msg)
 
 if __name__ == '__main__':
   main()
