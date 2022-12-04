@@ -53,7 +53,7 @@ random.seed(int(time.time()))
 # sends a help message for server commands
 @commands.command()
 async def help(message):
-  '''Displays help msg for server cmds'''
+  """Displays help msg for server cmds"""
   help = '''
 corn?help - Displays this message
 corn?hey - Get a random val quote
@@ -67,10 +67,9 @@ corn?voice_search [query] - Search for a tts voice
 # sends a random val quote
 @commands.command()
 async def hey(ctx):
-  '''Sends a random val quote'''
+  """Sends a random val quote"""
   await ctx.send(messages[random.randint(0, len(messages)-1)])
   return
-
 
 # chat revival command
 # ping a role when the command is run in a server to revive a channel
@@ -78,10 +77,10 @@ async def hey(ctx):
 @commands.command()
 @commands.cooldown(1, 10, commands.BucketType.user)
 async def revive(ctx):
-  '''
+  """
   Pings the necromancer role to revive a channel
   Has global cooldown for all users
-  '''
+  """
   # TODO restrict this to the production server
   rid = None
   for role in ctx.guild.roles:
@@ -95,7 +94,6 @@ async def revive(ctx):
 
   revival_msg = '<@&' + str(rid) + '>'
   await ctx.send(revival_msg)
-
 @revive.error
 async def revive_error(ctx, error):
   degrading_msgs = ['Touch some grass', 'Get some bitches']
@@ -108,7 +106,7 @@ async def revive_error(ctx, error):
 # send a custom tts (text to speech) message with a custom voice
 @commands.command()
 async def imitate(ctx, voice, *, message):
-  '''Sends a tts message with chosen voice in vc'''
+  """Sends a tts message with chosen voice in vc"""
   global voice_client
   voice_client = ctx.author.voice
   if voice_client:
@@ -130,12 +128,17 @@ async def imitate(ctx, voice, *, message):
   else:
     await ctx.send("You need to be connected to a voice channel")
   return
+@imitate.error
+async def imitate_error(ctx, error):
+  await ctx.send('Usage: corn?imitate [voice] [message]')
+  if type(voice_client) == discord.voice_client.VoiceClient:
+    await voice_client.disconnect()
 
 async def query_uberduck(text, voice="zwf"):
-  '''
+  """
   Query uberduck for tts voice file (helper)
   copied from uberduck blog
-  '''
+  """
   max_time = 90
   async with aiohttp.ClientSession() as session:
     url = f"{API_ROOT}/speak"
@@ -168,16 +171,9 @@ async def query_uberduck(text, voice="zwf"):
           async with session.get(response["path"]) as r:
             return BytesIO(await r.read())
 
-@imitate.error
-async def imitate_error(ctx, error):
-  await ctx.send(error)
-  await ctx.send('Usage: corn?imitate [voice] [message]')
-  if type(voice_client) == discord.voice_client.VoiceClient:
-    await voice_client.disconnect()
-
 @commands.command()
 async def voice_search(ctx, *, query):
-  '''Search for voices compatible with the imitate cmd'''
+  """Search for voices compatible with the imitate cmd"""
   # get list of voices
   url = "https://api.uberduck.ai/voices?mode=tts-basic&language=english"
   headers = {"accept": "application/json"}
@@ -197,14 +193,12 @@ async def voice_search(ctx, *, query):
     await ctx.send("No matching voices")
   else:
     await ctx.send(embed=embedder.voice_search_embed(voices))
-
 @voice_search.error
 async def voice_search_error(ctx, error):
-  await ctx.send(error)
   await ctx.send('Usage: corn?voice_search [search query]')
 
 async def setup(bot):
-  '''Adds functions to be used in multiple files'''
+  """Adds functions to be used in multiple files"""
   
   global API_KEY, API_ROOT, API_SECRET
   API_ROOT = 'https://api.uberduck.ai'

@@ -59,6 +59,7 @@ async def on_ready():
   '''Runs when bot is starting'''
   # load cmds from other files
   await bot.load_extension('server_cmds')
+  await bot.load_extension('admin_cmds')
   print("Logged in as {0.user}".format(bot),' on ', datetime.datetime.now())
 
 @bot.event
@@ -167,6 +168,8 @@ async def on_message(message):
 async def on_command_error(ctx, error):
   if isinstance(error, discord.ext.commands.CommandNotFound):
     await ctx.send('Invalid Command')
+  else:
+    await ctx.send(error)
 
 if __name__ == '__main__':
   main()

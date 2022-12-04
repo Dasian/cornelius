@@ -3,86 +3,118 @@ Commands that are run by admins from the bot dms
 Editing messages, publishing messages, misc
 '''
 
-from dis import disco
 import discord
+from discord.ext import commands
 import embedder
-
+from main import bot
 
 '''
     Editing Messages
 '''
-async def new(message):
+@commands.command()
+async def new(ctx):
+    """Create a new embedded msg"""
     embedder.new()
-    await message.channel.send("Current message:", embed=embedder.preview())
+    await ctx.send("Current message:", embed=embedder.preview())
 
-async def preview(message):
-    await message.channel.send("Current message:", embed=embedder.preview())
+@commands.command()
+async def preview(ctx):
+    """View current embedded msg"""
+    await ctx.send("Current message:", embed=embedder.preview())
 
-async def add(message):
-    if embedder.add(message.content):
+@commands.command()
+async def add(ctx, attr, *, value):
+    """Adds an embed attr to the current embedded msg"""
+    if embedder.add(attr, value):
         msg = embedder.preview()
-        await message.channel.send(embed=msg)
+        await ctx.send(embed=msg)
     else:
-        await message.channel.send("Usage: corn?add [attribute] [value]")
-        await message.channel.send("Unable to add content. Make sure the property exists.")
-        # TODO add list of attributes
+        await ctx.send("Unable to add content. Make sure the property exists.")
+        # TODO show list of attributes
+@add.error
+async def add_error(ctx, error):
+    await ctx.send("Usage: corn?add [attribute] [value]")
 
-async def remove(message):
-    if embedder.remove(message.content):
-        await message.channel.send("Current message:", embed=embedder.preview())
+@commands.command()
+async def remove(ctx, attr):
+    """Removes attr from embedded msg"""
+    if embedder.remove(attr):
+        await ctx.send("Current message:", embed=embedder.preview())
     else:
-        await message.channel.send("Usage: corn?remove [attribute]")
-        await message.channel.send("Unable to remove content. Make sure the property exists")
-        # TODO add list of attributes
+        await ctx.send("Unable to remove content. Make sure the property exists")
+        # TODO show list of attributes
+@remove.error
+async def remove_error(ctx, error):
+    await ctx.send("Usage: corn?remove [attribute]")
 
-async def templates(message):
+@commands.command()
+async def templates(ctx, message):
+    "Preview all saved templates"
     temps = embedder.templates()
     for t in temps:
         n = t[0]
         n = n[11:n.find('.json')]
         name = "Name: " + n
-        await message.channel.send(name, embed=t[1])
+        await ctx.send(name, embed=t[1])
     if temps == []:
-        await message.channel.send("There are no saved templates :((")
+        await ctx.send("There are no saved templates :((")
 
-async def load(message):
-    if embedder.load(message.content):
-        await message.channel.send("Current message:", embed=embedder.preview())
+@commands.command()
+async def load(ctx, *, fname):
+    """Loads emedded msg from a template"""
+    if embedder.load(fname):
+        await ctx.send("Current message:", embed=embedder.preview())
     else:
-        await message.channel.send("Usage: corn?load [template_name]")
-        await message.channel.send("Use corn?templates to view saved templates")
-        await message.channel.send("Couldn't load template. Is the name correct?")
+        await ctx.send("Couldn't load template. Is the name correct?")
+        # TODO show template names
+@load.error
+async def load_error(ctx, error):
+    await ctx.send("Usage: corn?load [template_name]")
+    await ctx.send("Use corn?templates to view saved templates")
 
-async def save(message):
-    if embedder.save(message.content):
-        await message.channel.send("Saved message as template")
+@commands.command()
+async def save(ctx, *, fname):
+    """
+    Save embedded msg as a template
+    Overwrites existing names
+    """
+    if embedder.save(fname):
+        await ctx.send("Saved message as template")
     else:
-        await message.channel.send("Couldn't save message as template, contact ya boi")
+        await ctx.send("Couldn't save message as template, try again or contact ya boi")
+@save.error
+async def save_error(ctx, error):
+    await ctx.send("Usage: corn?save [template_name]")
 
-async def delete(message):
-    if embedder.delete(message.content):
-        await message.channel.send("Successfully deleted template")
+@commands.command()
+async def delete(ctx, *, fname):
+    """Deletes saved template"""
+    if embedder.delete(fname):
+        await ctx.send("Successfully deleted template")
     else:
-        await message.channel.send("Usage: corn?delete [template_name]")
-        await message.channel.send("Use corn?templates to view saved templates")
-        await message.channel.send("Couldn't delete template. Is the name correct?")
+        await ctx.send("Couldn't delete template. Is the name correct?")
+@delete.error
+async def delete_error(ctx, error):
+    await ctx.send("Usage: corn?delete [template_name]")
+    await ctx.send("Use corn?templates to view saved templates")
 
 '''
     Publishing Messages
+    TODO replace channel selection with ui stuff
 '''
-# (helper) generate a list of accessible channels and associated servers
-def get_channels(client):
+def get_channels():
+    """Get a list of accessible servers and channels (helper)"""
     channels = []
-    for server in client.guilds:       
+    for server in bot.guilds:       
         for channel in server.text_channels:
             channels.append((server, channel))
-
     return channels
 
-# print list of accessible servers and channels
-async def show_channels(message, client):
-    channels = get_channels(client)
-    await message.channel.send(embed = embedder.channels(channels))
+@commands.command()
+async def show_channels(ctx):
+    """List accessible servers and channels"""
+    channels = get_channels()
+    await ctx.send(embed = embedder.channels(channels))
 
 # sets up publish paramaters
 # returns tuple (confirmation, publish_channel)
@@ -93,18 +125,18 @@ async def publish(message, client):
     # verify usage
     words = message.content.split(' ')
     if len(words) < 2:
-        await message.channel.send('usage: corn?publish [channel_id]')
+        await ctx.send('usage: corn?publish [channel_id]')
         await show_channels(message, client)
         return (False, -1)
     try:
         id = int(words[1])
     except:
-        await message.channel.send('invalid channel_id')
+        await ctx.send('invalid channel_id')
         await show_channels(message, client)
         return (False, -1) 
     accessible_channels = get_channels(client)
     if id >= len(accessible_channels) or id < 0:
-        await message.channel.send('invalid channel_id')
+        await ctx.send('invalid channel_id')
         await show_channels(message, client)
         return (False, -1)
 
@@ -117,11 +149,11 @@ async def publish(message, client):
 
     # show what will be published where
     e = embedder.preview()
-    await message.channel.send("Message to Publish:",embed = e)
-    await message.channel.send(msg)
+    await ctx.send("Message to Publish:",embed = e)
+    await ctx.send(msg)
     
     # ask for confirmation (handled in on_message)
-    await message.channel.send("Is this information correct? (yes/no)")
+    await ctx.send("Is this information correct? (yes/no)")
     return (True, publish_channel)
 
 # post normal message 
@@ -130,18 +162,18 @@ async def speak(message, client):
     # verify usage
     words = message.content.split(' ')
     if len(words) < 3:
-        await message.channel.send('usage: corn?speak [channel_id] [message]')
+        await ctx.send('usage: corn?speak [channel_id] [message]')
         await show_channels(message, client)
         return (False, -1, None)
     try:
         id = int(words[1])
     except:
-        await message.channel.send('invalid channel_id')
+        await ctx.send('invalid channel_id')
         await show_channels(message, client)
         return (False, -1, None) 
     accessible_channels = get_channels(client)
     if id >= len(accessible_channels) or id < 0:
-        await message.channel.send('invalid channel_id')
+        await ctx.send('invalid channel_id')
         await show_channels(message, client)
         return (False, -1, None)
 
@@ -158,11 +190,11 @@ async def speak(message, client):
         speak_msg += w + ' '
 
     # show message to publish
-    await message.channel.send("Message to Publish: " + speak_msg)
-    await message.channel.send(msg_location)
+    await ctx.send("Message to Publish: " + speak_msg)
+    await ctx.send(msg_location)
 
     # confirmation (handled in onmessage)
-    await message.channel.send("Is this information correct? (yes/no)")
+    await ctx.send("Is this information correct? (yes/no)")
     return (True, publish_channel, speak_msg)
 
 # (helper) returns a list of tuples (server, role obj)
@@ -179,7 +211,7 @@ def get_roles(client):
 async def show_roles(message, client):
     print('show_roles()')
     roles = get_roles(client)
-    await message.channel.send(embed=embedder.role_list(roles))
+    await ctx.send(embed=embedder.role_list(roles))
     return
 
 # usage: corn?ping [role] [channel_id] [msg?]
@@ -190,7 +222,7 @@ async def ping(message, client):
     # verification/parse
     words = message.content.split(' ')
     if len(words) < 4:
-        await message.channel.send('usage: corn?ping [role] [channel_id] [message]')
+        await ctx.send('usage: corn?ping [role] [channel_id] [message]')
         await show_channels(message, client)
         return (False, -1, None)
 
@@ -198,12 +230,12 @@ async def ping(message, client):
     try:
         id = int(words[2])
     except:
-        await message.channel.send('invalid channel_id')
+        await ctx.send('invalid channel_id')
         await show_channels(message, client)
         return (False, -1, -1, None) 
     accessible_channels = get_channels(client)
     if id >= len(accessible_channels) or id < 0:
-        await message.channel.send('invalid channel_id')
+        await ctx.send('invalid channel_id')
         await show_channels(message, client)
         return (False, -1, -1, None)
     
@@ -223,7 +255,7 @@ async def ping(message, client):
             target_role = role
             break
     if target_role is None:
-        await message.channel.send('invalid role name for server "' + sname +'"')
+        await ctx.send('invalid role name for server "' + sname +'"')
         await show_roles(message, client)
         return (False, -1, -1, None)
     
@@ -249,13 +281,13 @@ async def ping(message, client):
     ping_embed = discord.Embed(color=color, description=ping_msg)
 
     # show publish info
-    await message.channel.send("Preview:")
+    await ctx.send("Preview:")
 
-    await message.channel.send('@' + target_role.name + '', embed=ping_embed)
-    await message.channel.send(msg_location)
+    await ctx.send('@' + target_role.name + '', embed=ping_embed)
+    await ctx.send(msg_location)
 
     # confirmation (handled in onmessage)
-    await message.channel.send("Is this information correct? (yes/no)")
+    await ctx.send("Is this information correct? (yes/no)")
     return (True, publish_channel, rid, ping_embed)
 
 '''
@@ -270,7 +302,7 @@ async def help(message):
     if len(words) == 2:
         group = words[1].lower()
 
-    await message.channel.send(embed=embedder.help(group))
+    await ctx.send(embed=embedder.help(group))
 
 async def invalid(message):
     img_url = 'https://media1.tenor.com/images/c111231424bfa61d015c9dc9a3a81f7f/tenor.gif?itemid=19268094'
@@ -280,4 +312,22 @@ async def invalid(message):
     e = discord.Embed(title='You sussy baka bitch.', description=desc, color=0xf30404, url=title_url)
     e.set_thumbnail(url = img_url)
     e.set_footer(text='type corn?help for help tho')
-    await message.channel.send(embed=e)
+    await ctx.send(embed=e)
+
+
+
+async def setup(bot):
+    bot.add_command(help)
+    bot.add_command(new)
+    bot.add_command(preview)
+    # bot.add_command(publish)
+    bot.add_command(channels)
+    bot.add_command(add)
+    bot.add_command(remove)
+    bot.add_command(templates)
+    bot.add_command(load)
+    bot.add_command(save)
+    bot.add_command(delete)
+    # bot.add_command(speak)
+    bot.add_command(roles)
+    # bot.add_command(ping)
