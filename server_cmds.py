@@ -42,6 +42,7 @@ async def help(message):
   help = '''
 corn?help - Displays this message
 corn?hey - Get a random val quote
+corn?revive - Ping everyone with a necromancer role to revive this channel
   '''
   await message.channel.send(help)
   return
@@ -55,40 +56,11 @@ async def hey(message):
   await message.channel.send(random_message())
   return
 
-# pings everyone with the necromancer role to bring a channel back from the dead
-cooldown = False
-async def revive(message, client):
-  global cooldown
-  print('cooldown value: ', cooldown)
-  
-  # degrade
-  if cooldown:
-    await message.channel.send("On cooldown don't bug me")
-    await message.channel.send("Try again in x time")
-    return
-  
-  # begin cooldown for x time
-  cooldown = True
-  print('cooldown starting')
+# join a voice channel
+async def join_voice(ctx):
+  channel = ctx.author.voice.channel
+  await channel.connect()
 
-  # find the necromancer role
-  # TODO restrict this to the production server
-  rid = None
-  for server in client.guilds:
-    for role in server.roles:
-      if role.name.lower() == 'necromancer':
-        rid = role.id
-        break
-
-  if rid is None:
-    await message.channel.send("Oh fuck i messed up uhh oh fuck my bad")
-
-  revival_msg = '<@&' + str(rid) + '>'
-  await message.channel.send(revival_msg)
-
-  # set cooldown for x time
-  time.sleep(10)
-  print('cooldown ending')
-  cooldown = False
-
-  return
+# leave a voice channel
+async def leave_voice(ctx):
+  await ctx.voice_client.disconnect()

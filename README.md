@@ -9,3 +9,4 @@ Custom bot (Cornelius) for VTuber Valentina Chisei
 
 # TODO (ordered)
 - Chat revival role with cooldown
+- Custom Voice tts (like twitch)
