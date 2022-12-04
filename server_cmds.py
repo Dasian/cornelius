@@ -18,7 +18,10 @@ import re
 import requests
 import os
 
-class Server_Cmds(commands.Cog):
+# cursed "functionality"
+# from discord import app_commands
+
+class Server_Cmds(commands.Cog, name="Server Commands"):
   
   # Preset Messages
   messages = ["Hellooo", "^-^", 'these nuts',
@@ -49,16 +52,17 @@ class Server_Cmds(commands.Cog):
       "What's an internet footprint?"
   ]
 
-  def __init__(self, bot):
-    self.bot = bot  
+  def __init__(self):
+     
     global API_KEY, API_ROOT, API_SECRET
     API_ROOT = 'https://api.uberduck.ai'
     API_KEY = os.environ['UBERDUCK_API_KEY']
-    API_SECRET = os.environ['UBERDUCK_API_SECRET']  
+    API_SECRET = os.environ['UBERDUCK_API_SECRET']
+    global voice_client
+    voice_client = None
     random.seed(int(time.time()))
 
-  # sends a help message for server commands
-  @commands.command()
+  @commands.command(description="Prints server help menu")
   async def server_help(self, message):
     """Displays help msg for server cmds"""
     help = '''
@@ -71,17 +75,13 @@ class Server_Cmds(commands.Cog):
     await message.channel.send(help)
     return
 
-  # sends a random val quote
-  @commands.command(aliases=['quote', 'quotes', 'hello'])
+  @commands.command(aliases=['quote', 'quotes', 'hello'], description="Sends a random Valentina quote")
   async def hey(self, ctx):
     """Sends a random val quote"""
     await ctx.send(self.messages[random.randint(0, len(self.messages)-1)])
     return
 
-  # chat revival command
-  # ping a role when the command is run in a server to revive a channel
-  # has a cooldown for all users
-  @commands.command()
+  @commands.command(description="Pings users with a necromancer role to revive a dead chat. Has a global cooldown")
   @commands.cooldown(1, 10, commands.BucketType.user)
   async def revive(self, ctx):
     """
@@ -109,8 +109,7 @@ class Server_Cmds(commands.Cog):
       cooldown_msg = degrading_msgs[r]
       await ctx.send(cooldown_msg)
 
-  # send a custom tts (text to speech) message with a custom voice
-  @commands.command()
+  @commands.command(description="Sends a text to speech message in a voice channel with a selected voice")
   async def imitate(self, ctx, voice, *, message):
     """Sends a tts message with chosen voice in vc"""
     global voice_client
@@ -177,8 +176,9 @@ class Server_Cmds(commands.Cog):
             async with session.get(response["path"]) as r:
               return BytesIO(await r.read())
 
-  @commands.command(aliases=['voices_search', 'search_voice', 'search_voices'])
-  async def voice_search(self, ctx, *, query):
+  #@app_commands.command(name="voice_search", description="Search voices usable by the imitate cmd")
+  @commands.command(aliases=['voices_search', 'search_voice', 'search_voices'], description="Searches available voices to be used with the imitate command")
+  async def voice_search(self, ctx, *, query:str):
     """Search voices usable by imitate"""
     # get list of voices
     url = "https://api.uberduck.ai/voices?mode=tts-basic&language=english"
