@@ -5,31 +5,17 @@
 '''
 
 import os
-from random import randint
 import discord 
 import datetime
 from dotenv import load_dotenv
 from discord.ext import commands
-import requests
 
 # local files
 import embedder
 import admin_cmds
-import server_cmds
-
-# custom voice
-import aiohttp
-import tempfile
-import subprocess
-import asyncio
-from io import BytesIO
-import json
-import time
-import re
 
 # global vars
 cmd_start = '!' # change this at will bro
-server_prefix = ['help', 'hey', 'revive']
 admin_prefix =['help', 'new', 'preview', 'publish', 'add', 'remove', 'templates', 'load', 'save', 'delete', 'channels', 'speak', 'roles', 'ping']
 admins = []
 publish_confirmation = False
@@ -52,9 +38,6 @@ def main():
   load_dotenv()
   TOKEN = os.environ['TOKEN']
   PERMS = os.environ['PERMS']
-  API_ROOT = 'https://api.uberduck.ai'
-  API_KEY = os.environ['UBERDUCK_API_KEY']
-  API_SECRET = os.environ['UBERDUCK_API_SECRET']
   NUM_ADMINS = int(os.environ['NUM_ADMINS'])
   for i in range(0, NUM_ADMINS):
     s = "ADMIN" + str(i)
@@ -71,16 +54,16 @@ def main():
   bot.run(TOKEN)
 
 
-# Run when the bot is starting up
 @bot.event
 async def on_ready():
+  '''Runs when bot is starting'''
   # load cmds from other files
   await bot.load_extension('server_cmds')
   print("Logged in as {0.user}".format(bot),' on ', datetime.datetime.now())
 
-# Run whenever a message is received in any channel/dm (commands)
 @bot.event
 async def on_message(message):
+  '''Runs admin cmds (private dms)'''
   # ignore messages from the bot
   if message.author == bot.user:
     return
@@ -172,118 +155,13 @@ async def on_message(message):
       print("Exception:", e)
       await message.channel.send("Something went wrong :(((")
       await message.channel.send("here some nerd shit: " + str(e))
-      
-  # Server commands
-  elif message.guild:
-    # send a random message anywhere
-    if message.content.startswith(server_prefix[0]): # help
-      await server_cmds.help(message)
-    elif message.content.startswith(server_prefix[1]): # hey
-      await server_cmds.hey(message)
   
   # Random patron dm
   else:
     await message.channel.send("why we talk in secret?")
-    await message.channel.send(server_cmds.random_message())
 
   # allow for other commands from the @bot.command() decorator to run
   await bot.process_commands(message)
-
-# send a custom tts (text to speech) message with a custom voice
-@bot.command()
-async def imitate(ctx, voice, *, message):
-  global voice_client
-  voice_client = ctx.author.voice
-  if voice_client:
-    voice_client = await voice_client.channel.connect()
-    
-    # uberduck copied code
-    # await ctx.response.defer(ephemeral=True, with_message=True)
-    audio_data = await query_uberduck(message, voice)
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as wav_f, tempfile.NamedTemporaryFile(suffix=".opus") as opus_f:
-      wav_f.write(audio_data.getvalue())
-      wav_f.flush()
-      subprocess.check_call(["ffmpeg", "-y", "-i", wav_f.name, opus_f.name])
-      source = discord.FFmpegOpusAudio(opus_f.name) # ffmpeg executable needs to be in path env variable to work
-      voice_client.play(source, after=None)
-      while voice_client.is_playing():
-        await asyncio.sleep(0.5)
-        
-    await voice_client.disconnect()
-  else:
-    await ctx.send("You need to be connected to a voice channel")
-  return
-
-async def query_uberduck(text, voice="zwf"):
-  # copied from uberduck blog
-  max_time = 90
-  async with aiohttp.ClientSession() as session:
-    url = f"{API_ROOT}/speak"
-    data = json.dumps(
-      {
-        "speech": text,
-        "voice": voice,
-      }
-    )
-
-    start = time.time()
-    async with session.post(
-      url,
-      data=data,
-      auth=aiohttp.BasicAuth(API_KEY, API_SECRET),
-    ) as r:
-      if r.status != 200:
-        raise Exception("Error synthesizing speech", await r.json())
-      uuid = (await r.json())["uuid"]
-    while True:
-      if time.time() - start > max_time:
-        raise Exception("Request timed out!")
-      await asyncio.sleep(1)
-      status_url = f"{API_ROOT}/speak-status"
-      async with session.get(status_url, params={"uuid": uuid}) as r:
-        if r.status != 200:
-          continue
-        response = await r.json()
-        if response["path"]:
-          async with session.get(response["path"]) as r:
-            return BytesIO(await r.read())
-
-@imitate.error
-async def imitate_error(ctx, error):
-  await ctx.send(error)
-  await ctx.send('Usage: corn?imitate [voice] [message]')
-  if type(voice_client) == discord.voice_client.VoiceClient:
-    await voice_client.disconnect()
-
-@bot.command()
-async def voice_search(ctx, *, query):
-
-  # get list of voices
-  url = "https://api.uberduck.ai/voices?mode=tts-basic&language=english"
-  headers = {"accept": "application/json"}
-  response = requests.get(url, headers=headers).json()
-  voices = []
-  for r in response:
-    voices.append(r['name'])
-
-  # search list
-  query = query.split(' ')
-  expr = '.*'
-  for q in query:
-    expr += q + '|'
-  r = re.compile(expr[0:-1])
-  voices = list(filter(r.match, voices))
-  if len(voices) == 0:
-    await ctx.send("No matching voices")
-  else:
-    await ctx.send(embed=embedder.voice_search_embed(voices))
-
-  return
-
-@voice_search.error
-async def voice_search_error(ctx, error):
-  await ctx.send(error)
-  await ctx.send('Usage: corn?voice_search [search query]')
 
 @bot.event
 async def on_command_error(ctx, error):
