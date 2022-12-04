@@ -43,28 +43,27 @@ def main():
     s = "ADMIN" + str(i)
     admins.append(int(os.environ[s]))
 
-  # generate cmd prefix list
-  global admin_prefix, server_prefix, cmd_start
-  for i in range(len(server_prefix)):
-    server_prefix[i] = cmd_start + server_prefix[i]
-  for i in range(len(admin_prefix)):
-    admin_prefix[i] = cmd_start + admin_prefix[i]
-
   # Run client
   bot.run(TOKEN)
 
-
 @bot.event
 async def on_ready():
-  '''Runs when bot is starting'''
+  """Runs when bot is starting"""
   # load cmds from other files
   await bot.load_extension('server_cmds')
   await bot.load_extension('admin_cmds')
   print("Logged in as {0.user}".format(bot),' on ', datetime.datetime.now())
 
+@bot.command()
+async def reload(ctx):
+  """For development, updates all cmds"""
+  await bot.reload_extension('admin_cmds')
+  await bot.reload_extension('server_cmds')
+  await ctx.send('Reload complete')
+
 @bot.event
 async def on_message(message):
-  '''Runs admin cmds (private dms)'''
+  """Debug for now ig"""
   # ignore messages from the bot
   if message.author == bot.user:
     return
@@ -86,88 +85,20 @@ async def on_message(message):
     print("User:", message.author)
     print("Command:",message.content)
 
-    # publish confirmation
-    global publish_confirmation, publish_channel
-    if publish_confirmation:
-      if message.content.lower() == 'yes':
-        await message.channel.send('poggies')
-        await publish_channel.send(embed=embedder.preview())
-      else:
-        await message.channel.send('stop wasting my time bihtc')
-      publish_confirmation = False
-      return
-
-    # speak confirmation
-    global speak_confirmation, speak_msg
-    if speak_confirmation:
-      if message.content.lower() == 'yes':
-        await message.channel.send('epic')
-        await publish_channel.send(speak_msg)
-      else:
-        await message.channel.send('i will end you, whore')
-      speak_confirmation = False
-      return
-
-    # ping confirmation
-    global ping_conf, ping_embed, role_id
-    if ping_conf:
-      if message.content.lower() == 'yes':
-        await message.channel.send('cum')
-        await publish_channel.send('<@&'+str(role_id)+'>',embed=ping_embed)
-      else:
-        await message.channel.send('get some bitches')
-      ping_conf = False
-      return
-
-
-    # generate and publish embedded messages
-    try:
-      if message.content.startswith(admin_prefix[0]): # help
-        await admin_cmds.help(message)
-      elif message.content.startswith(admin_prefix[1]): # new
-        await admin_cmds.new(message)
-      elif message.content.startswith(admin_prefix[2]): # preview
-        await admin_cmds.preview(message)
-      elif message.content.startswith(admin_prefix[3]): # publish
-        publish_confirmation, publish_channel = await admin_cmds.publish(message, bot)
-      elif message.content.startswith(admin_prefix[10]): # channels
-        await admin_cmds.show_channels(message, bot)
-      elif message.content.startswith(admin_prefix[4]): # add
-        await admin_cmds.add(message)
-      elif message.content.startswith(admin_prefix[5]): # remove
-        await admin_cmds.remove(message)
-      elif message.content.startswith(admin_prefix[6]): # templates
-        await admin_cmds.templates(message)
-      elif message.content.startswith(admin_prefix[7]): # load
-        await admin_cmds.load(message)
-      elif message.content.startswith(admin_prefix[8]): # save
-        await admin_cmds.save(message)
-      elif message.content.startswith(admin_prefix[9]): # delete
-        await admin_cmds.delete(message)
-      elif message.content.startswith(admin_prefix[11]): # speak
-        speak_confirmation, publish_channel, speak_msg = await admin_cmds.speak(message, bot)
-      elif message.content.startswith(admin_prefix[12]): # roles
-        await admin_cmds.show_roles(message, bot)
-      elif message.content.startswith(admin_prefix[13]): # ping
-        ping_conf, publish_channel, role_id, ping_embed = await admin_cmds.ping(message, bot)
-      else:
-        await admin_cmds.invalid(message)
-    except Exception as e:
-      print("Exception:", e)
-      await message.channel.send("Something went wrong :(((")
-      await message.channel.send("here some nerd shit: " + str(e))
-  
-  # Random patron dm
-  else:
-    await message.channel.send("why we talk in secret?")
-
   # allow for other commands from the @bot.command() decorator to run
   await bot.process_commands(message)
 
 @bot.event
 async def on_command_error(ctx, error):
   if isinstance(error, discord.ext.commands.CommandNotFound):
-    await ctx.send('Invalid Command')
+    img_url = 'https://media1.tenor.com/images/c111231424bfa61d015c9dc9a3a81f7f/tenor.gif?itemid=19268094'
+    title_url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+
+    desc = '"' + ctx.message.content + '" isn\'t a command idiot lmao'
+    e = discord.Embed(title='You sussy baka bitch.', description=desc, color=0xf30404, url=title_url)
+    e.set_thumbnail(url = img_url)
+    e.set_footer(text='type corn?help for help tho')
+    await ctx.send(embed=e)
   else:
     await ctx.send(error)
 

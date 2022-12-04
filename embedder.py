@@ -237,8 +237,8 @@ def channels(list):
       e.add_field(name="Server: "+str(server), value=channels, inline=False)
   return e
 
-# returns an embedded message containg a list of pingable roles
 def role_list(list):
+  """Returns embedded msg with pingable roles"""
   print("Generating pingable roles")
   e = discord.Embed(title="Pingable Roles", description="List of roles that I can ping", color = 0x55FDF9)
   e.set_footer(text="run corn?ping [role] [channel_id] [msg?] to publish the current embedded message to that channel")
@@ -263,14 +263,24 @@ def role_list(list):
     e.add_field(name="Server: "+str(server), value=roles, inline=False)
   return e
 
-'''Voice Search Results Embed'''
 def voice_search_embed(list):
+  """Search voices usable by imitate"""
   e = discord.Embed(title='Voice Search')
-  results = ', '.join(list)
-  e.add_field(name='Results:', value=results, inline=False)
+
+  results = ''
+  i = 0
+  while i < len(list):
+    if len(results + list[i] +', ') < MAX_FIELD_LEN:
+      results += list[i] + ', '
+      i += 1
+    else:
+      e.add_field(name='Results:', value=results, inline=False)
+      results = ''
+
+  if results != '':
+    e.add_field(name='Results:', value=results, inline=False)
   return e
 
-# returns embedder help functionality
 '''
     corn?help [group]
 
@@ -283,7 +293,7 @@ def voice_search_embed(list):
     misc - help, example
 '''
 def help(group):
-
+  """Returns embedder help (admin only)"""
   valid_groups = ['all', 'edit', 'publish', 'templates', 'attributes', 'single_attributes', 
   'grouped_attributes', 'misc']
   

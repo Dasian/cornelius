@@ -10,6 +10,5 @@ Custom bot (Cornelius) for VTuber Valentina Chisei
 - Custom voice tts (text to speech) using uberduck ai
 
 # TODO (ordered)
-- Organize cmds into different files
-- Upgrade cmds (ui, slash cmds, etc.)
+- Upgrade cmds (ui, slash cmds, help cmds, etc.)
 - Implement mass dm
