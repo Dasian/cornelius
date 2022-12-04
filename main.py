@@ -10,6 +10,8 @@ import discord
 import datetime
 from dotenv import load_dotenv
 from discord.ext import commands
+import requests
+
 # local files
 import embedder
 import admin_cmds
@@ -23,6 +25,7 @@ import asyncio
 from io import BytesIO
 import json
 import time
+import re
 
 # global vars
 cmd_start = '!' # change this at will bro
@@ -36,9 +39,9 @@ speak_msg = ''
 role_id = 0
 ping_embed = None
 publish_channel = None
+voice_client = None
 # bot obj for bot commands (all intents enabled but could specify if you want)
 # extended off of client
-print(discord.__version__)
 bot = commands.Bot(command_prefix=cmd_start, intents=discord.Intents.all())
 
 # guess what this function is
@@ -230,9 +233,7 @@ async def imitate(ctx, voice, *, message):
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as wav_f, tempfile.NamedTemporaryFile(suffix=".opus") as opus_f:
       wav_f.write(audio_data.getvalue())
       wav_f.flush()
-      await ctx.send("writing complete")
       subprocess.check_call(["ffmpeg", "-y", "-i", wav_f.name, opus_f.name])
-      await ctx.send('ffmpeg done')
       source = discord.FFmpegOpusAudio(opus_f.name) # ffmpeg executable needs to be in path env variable to work
       voice_client.play(source, after=None)
       while voice_client.is_playing():
@@ -245,7 +246,7 @@ async def imitate(ctx, voice, *, message):
 
 async def query_uberduck(text, voice="zwf"):
   # copied from uberduck blog
-  max_time = 60
+  max_time = 90
   async with aiohttp.ClientSession() as session:
     url = f"{API_ROOT}/speak"
     data = json.dumps(
@@ -276,14 +277,48 @@ async def query_uberduck(text, voice="zwf"):
         if response["path"]:
           async with session.get(response["path"]) as r:
             return BytesIO(await r.read())
-  return
 
 @imitate.error
 async def imitate_error(ctx, error):
-  # TODO make this more descriptive
-  await ctx.send(str(error))
+  await ctx.send(error)
+  await ctx.send('Usage: corn?imitate [voice] [message]')
   if type(voice_client) == discord.voice_client.VoiceClient:
     await voice_client.disconnect()
+
+@bot.command()
+async def voice_search(ctx, *, query):
+
+  # get list of voices
+  url = "https://api.uberduck.ai/voices?mode=tts-basic&language=english"
+  headers = {"accept": "application/json"}
+  response = requests.get(url, headers=headers).json()
+  voices = []
+  for r in response:
+    voices.append(r['name'])
+
+  # search list
+  query = query.split(' ')
+  expr = '.*'
+  for q in query:
+    expr += q + '|'
+  r = re.compile(expr[0:-1])
+  voices = list(filter(r.match, voices))
+  if len(voices) == 0:
+    await ctx.send("No matching voices")
+  else:
+    await ctx.send(embed=embedder.voice_search_embed(voices))
+
+  return
+
+@voice_search.error
+async def voice_search_error(ctx, error):
+  await ctx.send(error)
+  await ctx.send('Usage: corn?voice_search [search query]')
+
+@bot.event
+async def on_command_error(ctx, error):
+  if isinstance(error, discord.ext.commands.CommandNotFound):
+    await ctx.send('Invalid Command')
 
 if __name__ == '__main__':
   main()

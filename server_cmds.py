@@ -1,9 +1,11 @@
 '''
   Functionality for server commands
 '''
-import discord
 import time
 import random
+from main import bot
+from discord.ext import commands
+from random import randint
 
 # Preset Messages
 messages = ["Hellooo", "^-^", 'these nuts',
@@ -43,6 +45,8 @@ async def help(message):
 corn?help - Displays this message
 corn?hey - Get a random val quote
 corn?revive - Ping everyone with a necromancer role to revive this channel
+corn?imitate [voice] [message] - Send a tts message into a vc
+corn?voice_search [query] - Search for a tts voice
   '''
   await message.channel.send(help)
   return
@@ -55,12 +59,3 @@ def random_message():
 async def hey(message):
   await message.channel.send(random_message())
   return
-
-# join a voice channel
-async def join_voice(ctx):
-  channel = ctx.author.voice.channel
-  await channel.connect()
-
-# leave a voice channel
-async def leave_voice(ctx):
-  await ctx.voice_client.disconnect()

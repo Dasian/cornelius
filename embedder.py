@@ -33,6 +33,8 @@ embed = {}
 folder = 'templates'
 fpath = folder + '/'
 
+MAX_EMBED_SIZE = 6000
+
 # Creates a new default embed
 def new():
   print("Creating new embed")
@@ -277,6 +279,12 @@ def role_list(list):
     e.add_field(name="Server: "+str(server), value=roles, inline=False)
   return e
 
+'''Voice Search Results Embed'''
+def voice_search_embed(list):
+  e = discord.Embed(title='Voice Search')
+  results = ', '.join(list)
+  e.add_field(name='Results:', value=results, inline=False)
+  return e
 
 # returns embedder help functionality
 '''
