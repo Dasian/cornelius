@@ -74,6 +74,8 @@ def main():
 # Run when the bot is starting up
 @bot.event
 async def on_ready():
+  # load cmds from other files
+  await bot.load_extension('server_cmds')
   print("Logged in as {0.user}".format(bot),' on ', datetime.datetime.now())
 
 # Run whenever a message is received in any channel/dm (commands)
@@ -178,8 +180,6 @@ async def on_message(message):
       await server_cmds.help(message)
     elif message.content.startswith(server_prefix[1]): # hey
       await server_cmds.hey(message)
-    # elif message.content.startswith(server_prefix[2]): # revive
-    #  await server_cmds.revive(message, client)
   
   # Random patron dm
   else:
@@ -188,36 +188,6 @@ async def on_message(message):
 
   # allow for other commands from the @bot.command() decorator to run
   await bot.process_commands(message)
-
-# chat revival command
-# ping a role when the command is run in a server to revive a channel
-# has a cooldown for all users
-@bot.command()
-@commands.cooldown(1, 10, commands.BucketType.user)
-async def revive(ctx):
-  # find the necromancer role
-  # TODO restrict this to the production server
-  rid = None
-  for server in bot.guilds:
-    for role in server.roles:
-      if role.name.lower() == 'necromancer':
-        rid = role.id
-        break
-
-  if rid is None:
-    await ctx.send("Oh fuck i messed up the code somewhere uhh oh fuck my bad")
-
-  revival_msg = '<@&' + str(rid) + '>'
-  await ctx.send(revival_msg)
-
-@revive.error
-async def revive_error(ctx, error):
-  degrading_msgs = ['Touch some grass', 'Get some bitches']
-  if isinstance(error, commands.CommandOnCooldown):
-    cooldown_msg = 'This cmd is on cooldown for ' + str(int(error.retry_after)) + ' more seconds'
-    r = randint(0, len(degrading_msgs))
-    cooldown_msg += '\n' + degrading_msgs[r]
-    await ctx.send(cooldown_msg)
 
 # send a custom tts (text to speech) message with a custom voice
 @bot.command()
