@@ -9,7 +9,7 @@
     "fields": [
       {
         "name": "Misc:",
-        "value": "corn?help - displays this message"
+        "value": "corn?admin_help - displays this message"
       },
       {
         "name": "Editing Commands",
@@ -17,7 +17,7 @@
       },
       {
         "name": "Template Commands",
-        "value": "corn?templates - shows the saved embedded messages with their name\ncorn?load [name]- loads a saved embedded message as the current message\ncorn?save [name]- saves the embedded message on the server, for future use"
+        "value": "corn?templates - shows the saved embedded messages with their name\ncorn?load [name]- loads a saved embedded message as the current message\ncorn?save [name]- saves the embedded message on the server, for future use\ncorn?delete [name] deletes template"
       },
       {
         "name": "Publishing Commands",

@@ -34,34 +34,31 @@ folder = 'templates'
 fpath = folder + '/'
 
 MAX_EMBED_SIZE = 6000
+MAX_FIELD_LEN = 1024
 
-# Creates a new default embed
 def new():
+  """Creates a new embed"""
   print("Creating new embed")
   global embed
   embed.clear()
   embed = default_template.copy()
   return
 
-# show the current state of the embedded message before publishing
-# returns the embedded message to be printed
 def preview():
+  """
+  Show the current state of the embedded message
+  Eeturns the embedded message to be printed
+  """
   print("Previewing embed")
   global embed
   return discord.Embed.from_dict(embed)
 
-# updates content to the embedded message
-# returns true on success, false otherwise
-def add(msg):
+def add(attr, val):
+  """
+  Updates embedded msg content
+  Returns true on success, false otherwise
+  """
   print("Updating attribute")
-  # verification
-  words = msg.split(' ')
-  if len(words) < 3:
-    return False
-  attr = words[1]
-  val = words[2]
-  for i in range(3, len(words)):
-    val += ' ' +words[i]
   print("Attribute:",attr)
   print("Value:",val)
   
@@ -100,15 +97,12 @@ def add(msg):
     return True
   return False
 
-# removes content from the embedded message
-# returns true on success, false otherwise
-def remove(msg):
-  # verification/init
+def remove(attr):
+  """
+  Removes attr from embedded msg
+  Returns true on success, false otherwise
+  """
   print("Removing attribute")
-  words = msg.split(' ')
-  if len(words) < 2:
-    return False
-  attr = words[1]
   print("Attr:",attr)
   
   # regular embedded attributes
@@ -123,24 +117,23 @@ def remove(msg):
   words = attr.split('-')
   dict_name, dict_attr = words
   if dict_name in valid_dict_names and dict_attr in valid_dict_attributes:
-
     # check if dict name and attr are an accepted combination
     if not dict_attr in attribute_mappings[dict_name]:
       return False
-    
     # remove attribute from nested dictionary
     if dict_name in embed.keys():
       d = embed[dict_name]
       d.pop(dict_attr)
       embed[dict_name].update(d)
-
     return True
 
   return False
 
-# shows all saved templates
-# returns a list of embeds to be shown
 def templates():
+  """
+  Preview all saved templates
+  Returns a list of embeds
+  """
   print("Printing Templates")
   msgs = []
   # each element is a tuple of (name, Embedded message)
@@ -153,12 +146,13 @@ def templates():
   print("Msgs:", msgs)
   return msgs
   
-# loads embedded message from a saved template
-# second arg should be templatenae, no path/extension
-def load(msg):
+def load(fname):
+  """
+  Loads embedded msg from a template
+  fname has no path/ext, can have spaces
+  """
   # verification
   print("Loading Template")
-  fname = second_arg(msg)
   print("fname:", fname)
   if fname == '':
     return False
@@ -178,13 +172,14 @@ def load(msg):
   except:
     return False
 
-# save the current embedded message as a template
-# second arg should be templatename, no path/extension
-# allows for names with spaces
-def save(msg):
+def save(fname):
+  """
+  Save embedded msg as a template
+  Overwrites existing names
+  fname has no path/ext, can have spaces
+  """
   # verification
   print("Saving Template")
-  fname = second_arg(msg)
   print('fname:', fname)
   if fname == '':
     return False
@@ -198,11 +193,10 @@ def save(msg):
   f.close()
   return True
 
-# deletes saved template
-def delete(msg):
-  # verification
+def delete(fname):
+  """Deletes saved template"""
   print("Deleting Template")
-  fname = second_arg(msg)
+  # verification
   if fname == '':
     return False
   fname += '.json'
@@ -214,23 +208,13 @@ def delete(msg):
     return False
   return True
 
-# (helper) returns the second arg of an input as a continuous string
-# required since template names allow for spaces
-def second_arg(msg):
-  words = msg.split(' ')
-  s = words[1]
-  for i in range(2, len(words)):
-    s += ' ' + words[i]
-  return s
-
-# returns an embedded message containing a list of accessible 
-# channels with their respective servers
-# c is an ordered list of (server, channel)
-MAX_FIELD_LEN = 1024
 def channels(list):
+  """
+  List accessible servers and channels
+  Returns embedded message
+  """
   print("Generating accessible channels")
   e = discord.Embed(title="Accessible Channels", description="List of channels that I'm able to publish to", color = 0x55FDF9)
-  MAX_FIELD_LEN = 1024
   e.set_footer(text="run corn?publish [channel_id] to publish the current embedded message to that channel")
   id = 0
   while id < len(list):
@@ -253,8 +237,8 @@ def channels(list):
       e.add_field(name="Server: "+str(server), value=channels, inline=False)
   return e
 
-# returns an embedded message containg a list of pingable roles
 def role_list(list):
+  """Returns embedded msg with pingable roles"""
   print("Generating pingable roles")
   e = discord.Embed(title="Pingable Roles", description="List of roles that I can ping", color = 0x55FDF9)
   e.set_footer(text="run corn?ping [role] [channel_id] [msg?] to publish the current embedded message to that channel")
@@ -279,14 +263,24 @@ def role_list(list):
     e.add_field(name="Server: "+str(server), value=roles, inline=False)
   return e
 
-'''Voice Search Results Embed'''
 def voice_search_embed(list):
+  """Search voices usable by imitate"""
   e = discord.Embed(title='Voice Search')
-  results = ', '.join(list)
-  e.add_field(name='Results:', value=results, inline=False)
+
+  results = ''
+  i = 0
+  while i < len(list):
+    if len(results + list[i] +', ') < MAX_FIELD_LEN:
+      results += list[i] + ', '
+      i += 1
+    else:
+      e.add_field(name='Results:', value=results, inline=False)
+      results = ''
+
+  if results != '':
+    e.add_field(name='Results:', value=results, inline=False)
   return e
 
-# returns embedder help functionality
 '''
     corn?help [group]
 
@@ -299,7 +293,7 @@ def voice_search_embed(list):
     misc - help, example
 '''
 def help(group):
-
+  """Returns embedder help (admin only)"""
   valid_groups = ['all', 'edit', 'publish', 'templates', 'attributes', 'single_attributes', 
   'grouped_attributes', 'misc']
   
