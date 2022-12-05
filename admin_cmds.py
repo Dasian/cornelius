@@ -303,9 +303,13 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
 
     @commands.command(description="Reloads all functions to implement changes without a full restart")
     async def reload(self, ctx):
-        """For development, updates all cmds without restarting bot"""
+        """For development, updates and syncs all cmds without restarting bot"""
         await self.bot.reload_extension('admin_cmds')
         await self.bot.reload_extension('server_cmds')
+
+        await ctx.send('Syncing...')
+        await self.bot.tree.sync(guild=discord.Object(id=self.bot.gid))
+
         await ctx.send('Reload complete')
 
 async def setup(bot):

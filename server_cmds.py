@@ -19,7 +19,9 @@ import requests
 import os
 
 # cursed "functionality"
-# from discord import app_commands
+from discord import app_commands
+gid = 954166428674707526
+g = discord.Object(id=gid)
 
 class Server_Cmds(commands.Cog, name="Server Commands"):
   
@@ -52,8 +54,8 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
       "What's an internet footprint?"
   ]
 
-  def __init__(self):
-     
+  def __init__(self, bot):
+    self.bot = bot
     global API_KEY, API_ROOT, API_SECRET
     API_ROOT = 'https://api.uberduck.ai'
     API_KEY = os.environ['UBERDUCK_API_KEY']
@@ -62,8 +64,9 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
     voice_client = None
     random.seed(int(time.time()))
 
-  @commands.command(description="Prints server help menu")
-  async def server_help(self, message):
+  @commands.hybrid_command(description="Prints server help menu", with_app_command=True)
+  @app_commands.guilds(g)
+  async def server_help(self, ctx):
     """Displays help msg for server cmds"""
     help = '''
   corn?server_help - Displays server help msg
@@ -72,17 +75,19 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
   corn?imitate [voice] [message] - Send a tts message into a vc
   corn?voice_search [query] - Search for a tts voice
     '''
-    await message.channel.send(help)
+    await ctx.reply(help, ephemeral=True)
     return
 
-  @commands.command(aliases=['quote', 'quotes', 'hello'], description="Sends a random Valentina quote")
+  @commands.hybrid_command(with_app_command=True,aliases=['quote', 'quotes', 'hello'], description="Sends a random Valentina quote")
+  @app_commands.guilds(g)
   async def hey(self, ctx):
     """Sends a random val quote"""
-    await ctx.send(self.messages[random.randint(0, len(self.messages)-1)])
+    await ctx.reply(self.messages[random.randint(0, len(self.messages)-1)])
     return
 
-  @commands.command(description="Pings users with a necromancer role to revive a dead chat. Has a global cooldown")
+  @commands.hybrid_command(description="Pings users with a necromancer role to revive a dead chat. Has a global cooldown for all users.")
   @commands.cooldown(1, 10, commands.BucketType.user)
+  @app_commands.guilds(g)
   async def revive(self, ctx):
     """
     Pings the necromancer role to revive a channel
@@ -96,8 +101,8 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
         break
 
     if rid is None:
-      await ctx.send("Oh fuck i messed up the code somewhere uhh oh fuck my bad")
-      await ctx.send("Is there a necromancer role in this server?")
+      await ctx.reply("Oh fuck i messed up the code somewhere uhh oh fuck my bad", ephemeral=True)
+      await ctx.reply("Is there a necromancer role in this server?", ephemeral=True)
 
     revival_msg = '<@&' + str(rid) + '>'
     await ctx.send(revival_msg)
@@ -105,18 +110,18 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
   async def revive_error(self, ctx, error):
     degrading_msgs = ['Touch some grass', 'Get some bitches']
     if isinstance(error, commands.CommandOnCooldown):
-      r = randint(0, len(degrading_msgs))
+      r = randint(0, len(degrading_msgs)-1)
       cooldown_msg = degrading_msgs[r]
-      await ctx.send(cooldown_msg)
+      await ctx.reply(cooldown_msg, ephemeral=True)
 
-  @commands.command(description="Sends a text to speech message in a voice channel with a selected voice")
+  @commands.hybrid_command(with_app_command=True,description="Sends a text to speech message in a voice channel with a selected voice")
+  @app_commands.guilds(g)
   async def imitate(self, ctx, voice, *, message):
     """Sends a tts message with chosen voice in vc"""
     global voice_client
     voice_client = ctx.author.voice
     if voice_client:
       voice_client = await voice_client.channel.connect()
-      
       # uberduck copied code
       # await ctx.response.defer(ephemeral=True, with_message=True)
       audio_data = await self.query_uberduck(message, voice)
@@ -130,12 +135,15 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
           await asyncio.sleep(0.5)
           
       await voice_client.disconnect()
+      msg = str(voice) + ': ' + str(message)
+      print(msg)
+      await ctx.send(msg)
     else:
-      await ctx.send("You need to be connected to a voice channel")
+      await ctx.reply("You need to be connected to a voice channel", ephemeral=True)
     return
   @imitate.error
   async def imitate_error(self, ctx, error):
-    await ctx.send('Usage: corn?imitate [voice] [message]')
+    await ctx.reply('Usage: corn?imitate [voice] [message]', ephemeral=True)
     if type(voice_client) == discord.voice_client.VoiceClient:
       await voice_client.disconnect()
 
@@ -176,10 +184,14 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
             async with session.get(response["path"]) as r:
               return BytesIO(await r.read())
 
-  #@app_commands.command(name="voice_search", description="Search voices usable by the imitate cmd")
-  @commands.command(aliases=['voices_search', 'search_voice', 'search_voices'], description="Searches available voices to be used with the imitate command")
+  @commands.hybrid_command(with_app_command=True,description="Search voices usable by the imitate cmd")
+  @app_commands.guilds(g)
   async def voice_search(self, ctx, *, query:str):
     """Search voices usable by imitate"""
+
+    # does this work?
+    await ctx.defer(ephemeral=True)
+
     # get list of voices
     url = "https://api.uberduck.ai/voices?mode=tts-basic&language=english"
     headers = {"accept": "application/json"}
@@ -196,12 +208,12 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
     r = re.compile(expr[0:-1])
     voices = list(filter(r.match, voices))
     if len(voices) == 0:
-      await ctx.send("No matching voices")
+      await ctx.reply("No matching voices", ephemeral=True)
     else:
-      await ctx.send(embed=embedder.voice_search_embed(voices))
+      await ctx.reply(embed=embedder.voice_search_embed(voices), ephemeral=True)
   @voice_search.error
   async def voice_search_error(self, ctx, error):
-    await ctx.send('Usage: corn?voice_search [search query]')
+    await ctx.reply('Usage: corn?voice_search [search query]', ephemeral=True)
 
 async def setup(bot):
   """Adds commands to bot"""
