@@ -234,9 +234,9 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
         await ctx.send(embed=embedder.role_list(roles))
         return
 
-    @commands.hybrid_command(with_app_command=True,description="Ping a role with a set message; Different colored embeds for certain roles")
-    async def ping(self, ctx, rname:str, cid:int, *, ping_msg):
-        """Pings a role and posts embedded msg"""
+    @commands.hybrid_command(with_app_command=True, description="Ping a role and publishes current embedded msg")
+    async def ping(self, ctx, rname:str, cid:int):
+        """Pings a role and publishes current embedded msg"""
         accessible_channels = self.get_channels()
         if cid >= len(accessible_channels) or cid < 0:
             await ctx.send('invalid channel_id')
@@ -267,13 +267,17 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
         c = "\nChannel: " + publish_channel.name
         msg_location = s  + c
         
-        # create embed
+        # create embed (old way just puts a msg in embed and changes color)
+        '''
         color_map = {'twitter': 0x00acee, 'patreon': 0xff424D, 'youtube': 0xff0000, 'tiktok': 0xff0050}
         if role.name.lower() in color_map.keys():
             color = color_map[role.name.lower()]
         else:
             color = 0x36393F
         ping_embed = discord.Embed(color=color, description=ping_msg)
+        '''
+        # preview currently loaded embed
+        ping_embed = embedder.preview()
 
         # confirmation
         await ctx.send("Preview:")
@@ -292,7 +296,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
         return
     @ping.error
     async def ping_error(self, ctx, error):
-        await ctx.send('Usage: corn?ping [role] [channel_id] [msg]')
+        await ctx.send('Usage: corn?ping [role] [channel_id]\nUse corn?roles and corn?channels to get the arguments\nEx: corn?ping twitter 11')
 
     '''
         Misc

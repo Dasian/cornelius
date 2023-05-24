@@ -13,19 +13,19 @@
       },
       {
         "name": "corn?publish [channel_id]",
-        "value": "Publish the current msg to the channel_id. Requires confirmation."
+        "value": "Publish the current msg to the channel_id. Requires confirmation.\nEx: corn?publish 13"
       }, 
       {
         "name": "corn?speak [channel_id] [message]",
-        "value": "Sends a normal discord message to the specified chanel. Requires confirmation."
+        "value": "Sends a normal discord message to the specified chanel. Requires confirmation.\nEx: corn?speak 69 united we bargain, divided we beg"
       },
       {
         "name": "corn?roles",
         "value": "Get a list of all roles you can ping."
       },
       {
-        "name": "corn?ping [role_name] [channel_id] [ping_msg]",
-        "value": "Ping a role with a particular message. Social media pings have a unique embed color."
+        "name": "corn?ping [role_name] [channel_id]",
+        "value": "Ping a role and publish the current embedded msg.\nEx: corn?ping twitter 35"
       }
     ],
     "footer": {
