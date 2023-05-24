@@ -241,7 +241,7 @@ def role_list(list):
   """Returns embedded msg with pingable roles"""
   print("Generating pingable roles")
   e = discord.Embed(title="Pingable Roles", description="List of roles that I can ping", color = 0x55FDF9)
-  e.set_footer(text="run corn?ping [role] [channel_id] [msg?] to publish the current embedded message to that channel")
+  e.set_footer(text="run corn?ping [role] [channel_id] to publish the current embedded message to that channel")
   
   id = 0
   while id < len(list):
