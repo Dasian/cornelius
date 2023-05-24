@@ -21,7 +21,7 @@
       },
       {
         "name": "Publishing Commands",
-        "value": "corn?channels - get a list of all channel_ids you can post to\ncorn?publish [channel_id] - publishes the current msg to the channel_id\ncorn?speak [channel_id] [message] - send a normal discord message to the channel id\ncorn?roles - get a list of all roles you can ping\ncorn?ping [role_name] [channel_id] [ping_msg] - ping a role with a particular message"
+        "value": "corn?channels - get a list of all channel_ids you can post to\ncorn?publish [channel_id] - publishes the current msg to the channel_id\ncorn?speak [channel_id] [message] - send a normal discord message to the channel id\ncorn?roles - get a list of all roles you can ping\ncorn?ping [role_name] [channel_id] - ping a role and publish current embedded msg"
       },
       {
         "name": "Single Attributes",

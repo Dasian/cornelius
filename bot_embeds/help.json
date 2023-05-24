@@ -1,7 +1,7 @@
 {
   "type": "rich",
   "title": "You need help you little bitch?",
-  "description": "These are a list of groups you can use to find specific cmds for a task.\n\nUsage: corn?help [group]\n\nEx: corn?help edit",
+  "description": "These are a list of groups you can use to find specific cmds for a task.\n\nUsage: corn?help [group]\nEx: corn?help edit",
   "color": 12256499,
   "thumbnail": {
     "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"

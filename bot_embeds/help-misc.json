@@ -9,7 +9,7 @@
     "fields": [
       {
         "name": "corn?help [group]",
-        "value": "Gives a list of cmds for that group. Leave group empty to get a list of groups."
+        "value": "Gives a list of cmds for that group. Leave group empty to get a list of groups.\nEx: corn?help publish"
       }
     ],
     "footer": {

@@ -13,11 +13,11 @@
       },
       {
         "name": "corn?add [attribute] [value]",
-        "value": "Adds/updates the specified attribute with a specific value to the currernt message.\nUse corn?help attributes for a list of all attributes."
+        "value": "Adds/updates the specified attribute with a specific value to the currernt message.\nUse corn?help attributes for a list of all attributes.\nEx: corn?add title Christianity and its Consequences"
       },
       {
         "name": "corn?remove [attribute]",
-        "value": "Removes the specified attribute from the current message."
+        "value": "Removes the specified attribute from the current message.\nEx: corn?remove footer-text"
       }
     ],
     "footer": {
