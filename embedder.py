@@ -311,12 +311,6 @@ def admin_help(group):
 
 def server_help():
   """Returns server help embed"""
-  '''corn?help - Displays this msg
-      corn?hey - Get a random val quote
-     corn?revive - Ping everyone with a necromancer role to revive this channel
-     corn?imitate [voice] [message] - Send a tts message into a vc [admin only]
-     corn?voice_search [query] - Search for a tts voice [admin only]
-  '''
   f = open('bot_embeds/help-server.json', 'r')
   help = json.load(f).copy()
   f.close()
