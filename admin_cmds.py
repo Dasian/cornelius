@@ -3,7 +3,6 @@ Commands that are run by admins from the bot dms
 Editing messages, publishing messages, misc
 '''
 
-from symbol import with_item
 import discord
 from discord.ext import commands
 import embedder

@@ -66,15 +66,16 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
     global voice_client
     voice_client = None
     random.seed(int(time.time()))
-    self.admins = []
+
+  async def is_admin(ctx):
+    """Check to restrict certain server cmds"""
+    # can't use self here so just grab from env file everytime
+    admins = []
     NUM_ADMINS = int(os.environ['NUM_ADMINS'])
     for i in range(0, NUM_ADMINS):
       s = "ADMIN" + str(i)
-      self.admins.append(int(os.environ[s]))
-
-  async def is_admin(self, ctx):
-    """Check to restrict certain server cmds"""
-    return ctx.author.id in self.admins
+      admins.append(int(os.environ[s]))
+    return ctx.author.id in admins
 
   @commands.hybrid_command(description="Prints server help menu", with_app_command=True)
   @app_commands.guilds(g)
