@@ -66,6 +66,11 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
     global voice_client
     voice_client = None
     random.seed(int(time.time()))
+    self.admins = []
+    NUM_ADMINS = int(os.environ['NUM_ADMINS'])
+    for i in range(0, NUM_ADMINS):
+      s = "ADMIN" + str(i)
+      self.admins.append(int(os.environ[s]))
 
   async def is_admin(ctx):
     """Check to restrict certain server cmds"""
@@ -79,15 +84,14 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
 
   @commands.hybrid_command(description="Prints server help menu", with_app_command=True)
   @app_commands.guilds(g)
-  async def server_help(self, ctx):
-    """Displays help msg for server cmds"""
-    help = '''corn?server_help - Displays this msg
-    corn?hey - Get a random val quote
-    corn?revive - Ping everyone with a necromancer role to revive this channel
-    corn?imitate [voice] [message] - Send a tts message into a vc [admin only]
-    corn?voice_search [query] - Search for a tts voice [admin only]
-    '''
-    await ctx.reply(help, ephemeral=True)
+  async def help(self, ctx, group:str = None):
+    """Displays help msg"""
+    # admin help (admin and pm)
+    if ctx.author.id in self.admins and not ctx.guild:
+      await ctx.send(embed=embedder.admin_help(group))
+    # server help
+    else:
+      await ctx.reply(ephemeral=True, embed=embedder.server_help())
     return
 
   @commands.hybrid_command(with_app_command=True,aliases=['quote', 'quotes', 'hello'], description="Sends a random Valentina quote")

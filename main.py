@@ -45,6 +45,7 @@ def main():
 
   global bot
   bot = Cornelius()
+  bot.remove_command('help')
   bot.run(TOKEN)
 
 if __name__ == '__main__':

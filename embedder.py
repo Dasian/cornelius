@@ -292,7 +292,7 @@ def voice_search_embed(list):
     attributes - all attributes, single and grouped
     misc - help, example
 '''
-def help(group):
+def admin_help(group):
   """Returns embedder help (admin only)"""
   valid_groups = ['all', 'edit', 'publish', 'templates', 'attributes', 'single_attributes', 
   'grouped_attributes', 'misc']
@@ -305,6 +305,19 @@ def help(group):
     help_path = 'bot_embeds/help.json'
 
   f = open(help_path, 'r')
+  help = json.load(f).copy()
+  f.close()
+  return discord.Embed.from_dict(help)
+
+def server_help():
+  """Returns server help embed"""
+  '''corn?help - Displays this msg
+      corn?hey - Get a random val quote
+     corn?revive - Ping everyone with a necromancer role to revive this channel
+     corn?imitate [voice] [message] - Send a tts message into a vc [admin only]
+     corn?voice_search [query] - Search for a tts voice [admin only]
+  '''
+  f = open('bot_embeds/help-server.json', 'r')
   help = json.load(f).copy()
   f.close()
   return discord.Embed.from_dict(help)

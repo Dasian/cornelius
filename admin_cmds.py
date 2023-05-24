@@ -297,11 +297,6 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     '''
         Misc
     '''
-    @commands.hybrid_command(with_app_command=True,description="Prints help menu for admin cmds")
-    async def admin_help(self, ctx, group:str = None):
-        """Prints admin help menu"""
-        await ctx.send(embed=embedder.help(group))
-    
     @commands.hybrid_command(with_app_command=True,description="Get a list of embed attributes used for editing", aliases=['get_attributes'])
     async def attributes(self, ctx):
         """Prints list of embed attributes"""
