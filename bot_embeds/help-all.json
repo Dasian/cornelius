@@ -9,7 +9,7 @@
     "fields": [
       {
         "name": "Misc:",
-        "value": "corn?admin_help - displays this message"
+        "value": "corn?help - displays this message"
       },
       {
         "name": "Editing Commands",

@@ -1,0 +1,34 @@
+{
+    "type": "rich",
+    "title": "You need help??",
+    "description": "Well I live to server innit",
+    "color": 12256499,
+    "thumbnail": {
+      "url": "https://pm1.narvii.com/6505/39ba0b332fea2340f0202e15b46d48cfb599e680_hq.jpg"
+    }, 
+    "fields": [
+      {
+        "name": "corn?hey",
+        "value": "Get a random val quote"
+      }, 
+      {
+        "name": "corn?revive",
+        "value": "Ping everyone with a necromancer role to revive this channel"
+      },
+      {
+        "name": "corn?voice_search [query]",
+        "value": " Search for available text to speech voices [admin only]"
+      },
+      {
+        "name": "corn?imitate [voice] [message]",
+        "value": " Send a text to speech message into a vc [admin only]"
+      },
+      {
+        "name": "corn?help",
+        "value": "Display this msg"
+      }
+    ],
+    "footer": {
+      "text": "lil text bc im a just a lil homie"
+    }
+  }

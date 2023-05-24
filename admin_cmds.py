@@ -10,6 +10,12 @@ import asyncio
 from dotenv import load_dotenv
 import os
 from discord import ui
+from discord import app_commands
+
+# test server id
+# should be global though, no?
+gid = 954166428674707526
+g = discord.Object(id=gid)
 
 class Admin_Cmds(commands.Cog, name='Admin Commands'):
 
@@ -29,13 +35,13 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     '''
         Editing Messages
     '''
-    @commands.command(description="Create a new embedded msg")
+    @commands.hybrid_command(with_app_command=True,description="Create a new embedded msg")
     async def new(self, ctx):
         """Create a new embedded msg"""
         embedder.new()
-        await ctx.send("Current message:", embed=embedder.preview())
+        await ctx.reply("Current message:", embed=embedder.preview())
 
-    @commands.command(description="View current embedded msg")
+    @commands.hybrid_command(with_app_command=True,description="View current embedded msg")
     async def preview(self, ctx):
         """View current embedded msg"""
         await ctx.send("Current message:", embed=embedder.preview())
@@ -43,7 +49,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     async def preview_error(self, ctx, error):
         await ctx.send('No msg to preview, create a new msg or load from a template')
 
-    @commands.command(description="Adds/Updates attribute to the current embedded msg",aliases=['update'])
+    @commands.hybrid_command(with_app_command=True,description="Adds/Updates attribute to the current embedded msg",aliases=['update'])
     async def add(self, ctx, attr, *, value):
         """Adds an embed attr to the current embedded msg"""
         if embedder.add(attr, value):
@@ -56,7 +62,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     async def add_error(self, ctx, error):
         await ctx.send("Usage: corn?add [attribute] [value]")
 
-    @commands.command(description="Removes attribute from loaded embedded msg")
+    @commands.hybrid_command(with_app_command=True,description="Removes attribute from loaded embedded msg")
     async def remove(self, ctx, attr):
         """Removes attr from embedded msg"""
         if embedder.remove(attr):
@@ -68,7 +74,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     async def remove_error(self, ctx, error):
         await ctx.send("Usage: corn?remove [attribute]")
 
-    @commands.command(description="Sends all embed templates with their names")
+    @commands.hybrid_command(with_app_command=True,description="Sends all embed templates with their names")
     async def templates(self, ctx):
         "Preview all saved templates"
         temps = embedder.templates()
@@ -80,7 +86,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
         if temps == []:
             await ctx.send("There are no saved templates :((")
 
-    @commands.command(description="Sets a saved embedded msg as the current msg")
+    @commands.hybrid_command(with_app_command=True,description="Sets a saved embedded msg as the current msg")
     async def load(self, ctx, *, fname):
         """Loads emedded msg from a template"""
         if embedder.load(fname):
@@ -93,7 +99,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
         await ctx.send("Usage: corn?load [template_name]")
         await ctx.send("Use corn?templates to view saved templates")
 
-    @commands.command(description="Saves current msg as an embed template")
+    @commands.hybrid_command(with_app_command=True,description="Saves current msg as an embed template")
     async def save(self, ctx, *, fname):
         """
         Save embedded msg as a template
@@ -107,7 +113,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     async def save_error(self, ctx, error):
         await ctx.send("Usage: corn?save [template_name]")
 
-    @commands.command(description="Deletes a saved template")
+    @commands.hybrid_command(with_app_command=True,description="Deletes a saved template")
     async def delete(self, ctx, *, fname):
         """Deletes saved template"""
         if embedder.delete(fname):
@@ -131,13 +137,13 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
                 channels.append((server, channel))
         return channels
 
-    @commands.command(name='channels', aliases=['show_channels', 'get_channels'], description="Get a list of all channels you can post to")
+    @commands.hybrid_command(with_app_command=True,name='channels', aliases=['show_channels', 'get_channels'], description="Get a list of all channels you can post to")
     async def show_channels(self, ctx):
         """List accessible servers and channels"""
         channels = self.get_channels()
         await ctx.send(embed = embedder.channels(channels))
 
-    @commands.command(description="Post current embedded msg to a channel")
+    @commands.hybrid_command(with_app_command=True,description="Post current embedded msg to a channel")
     async def publish(self, ctx, cid:int):
         """Publishes embedded msg to target channel"""
         # verify usage
@@ -175,7 +181,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
         await ctx.send('Usage: corn?publish [channel_id]')
         await ctx.send('Use corn?show_channels to see channel ids')
 
-    @commands.command(description="Post a normal message to a channel", usage="corn?speak [channel_id] [message]")
+    @commands.hybrid_command(with_app_command=True,description="Post a normal message to a channel", usage="corn?speak [channel_id] [message]")
     async def speak(self, ctx, cid:int, *, msg):
         """Posts normal message to channel"""
         # verify usage
@@ -220,7 +226,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
                 roles.append((server, role))
         return roles
 
-    @commands.command(name='roles', aliases=['show_roles', 'get_roles', 'pingable_roles'], description="Get a list of all roles you can ping")
+    @commands.hybrid_command(with_app_command=True,name='roles', aliases=['show_roles', 'get_roles', 'pingable_roles'], description="Get a list of all roles you can ping")
     async def show_roles(self, ctx):
         """Show list of pingable roles"""
         print('show_roles()')
@@ -228,7 +234,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
         await ctx.send(embed=embedder.role_list(roles))
         return
 
-    @commands.command(description="Ping a role with a set message; Different colored embeds for certain roles")
+    @commands.hybrid_command(with_app_command=True,description="Ping a role with a set message; Different colored embeds for certain roles")
     async def ping(self, ctx, rname:str, cid:int, *, ping_msg):
         """Pings a role and posts embedded msg"""
         accessible_channels = self.get_channels()
@@ -291,26 +297,29 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     '''
         Misc
     '''
-    @commands.command(description="Prints help menu for admin cmds")
-    async def admin_help(self, ctx, group:str = None):
-        """Prints admin help menu"""
-        await ctx.send(embed=embedder.help(group))
-    
-    @commands.command(description="Get a list of embed attributes used for editing", aliases=['get_attributes'])
+    @commands.hybrid_command(with_app_command=True,description="Get a list of embed attributes used for editing", aliases=['get_attributes'])
     async def attributes(self, ctx):
         """Prints list of embed attributes"""
         await ctx.send(embed=embedder.help('attributes'))
 
-    @commands.command(description="Reloads all functions to implement changes without a full restart")
+    @commands.hybrid_command(with_app_command=True,description="Reloads all functions to implement changes without a full restart")
     async def reload(self, ctx):
-        """For development, updates and syncs all cmds without restarting bot"""
+        """Updates cmds without restarting (bot development)"""
+        if ctx.author.id != self.admins[0]:
+            await ctx.send("You can't run this")
+            return
         await self.bot.reload_extension('admin_cmds')
         await self.bot.reload_extension('server_cmds')
-
-        await ctx.send('Syncing...')
-        await self.bot.tree.sync(guild=discord.Object(id=self.bot.gid))
-
         await ctx.send('Reload complete')
+
+    @commands.hybrid_command(with_app_command=True, description="Resync cmds with discord")
+    async def resync(self, ctx):
+        """Resync cmds with discord (bot development)"""
+        if ctx.author.id != self.admins[0]:
+            await ctx.send("You can't run this")
+            return
+        await self.bot.tree.sync(guild=discord.Object(id=self.bot.gid))
+        await ctx.send("Resync complete")
 
 async def setup(bot):
     """Adds commands to bot"""

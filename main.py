@@ -21,7 +21,6 @@ class Cornelius(commands.Bot):
     # load cmds from other files
     await self.load_extension('server_cmds')
     await self.load_extension('admin_cmds')
-    await self.tree.sync(guild=discord.Object(id=self.gid))
     print("Logged in as {0.user}".format(bot),' on ', datetime.datetime.now())
 
   async def on_command_error(self, ctx, error):
@@ -46,6 +45,7 @@ def main():
 
   global bot
   bot = Cornelius()
+  bot.remove_command('help')
   bot.run(TOKEN)
 
 if __name__ == '__main__':
