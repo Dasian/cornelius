@@ -13,7 +13,7 @@
       }, 
       {
         "name": "corn?revive",
-        "value": "Ping everyone with a necromancer role to revive this channel"
+        "value": "Ping the 'chat revive' role to revive this channel [15 min global cooldown]"
       },
       {
         "name": "corn?voice_search [query]",
