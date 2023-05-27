@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 class Cornelius(commands.Bot):
   """Bot wrapper; allows for hybrid commands"""
   def __init__(self):
-    super().__init__(command_prefix='!', intents=discord.Intents.all())
+    super().__init__(command_prefix='corn?', intents=discord.Intents.all())
     self.gid = 954166428674707526 # test server
 
   async def on_ready(self):
