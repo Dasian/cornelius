@@ -34,8 +34,6 @@ class Cornelius(commands.Bot):
       e.set_thumbnail(url = img_url)
       e.set_footer(text='type corn?help for help tho')
       await ctx.reply(embed=e, ephemeral=True)
-    else:
-      await ctx.reply(error, ephemeral=True)
 
 
 def main():
