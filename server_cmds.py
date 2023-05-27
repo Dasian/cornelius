@@ -102,7 +102,7 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
     return
 
   @commands.command(description="Pings users with the chat revive role to revive a dead channel. Has a global cooldown for all users.")
-  @commands.cooldown(1, 10, commands.BucketType.user)
+  @commands.cooldown(1, 900, commands.BucketType.user)
   @app_commands.guilds(g)
   async def revive(self, ctx):
     """
@@ -124,12 +124,13 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
     revival_msg = '<@&' + str(rid) + '>'
     await ctx.send(revival_msg)
   @revive.error
-  # TODO this sends two error messages for some reason
   async def revive_error(self, ctx, error):
     degrading_msgs = ['Touch some grass', 'Get some bitches', 'Insert degrading message here']
     if isinstance(error, commands.CommandOnCooldown):
       r = randint(0, len(degrading_msgs)-1)
-      cooldown_msg = degrading_msgs[r] + f'. Global cooldown ends in {round(error.retry_after, 2)} seconds.'
+      cooldown_min = int(error.retry_after / 60)
+      cooldown_sec = int(error.retry_after % 60)
+      cooldown_msg = degrading_msgs[r] + f'. Global cooldown ends in {cooldown_min} minutes and {cooldown_sec} seconds.'
       await ctx.reply(cooldown_msg, ephemeral=True)
       return
 
