@@ -130,7 +130,10 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
       r = randint(0, len(degrading_msgs)-1)
       cooldown_min = int(error.retry_after / 60)
       cooldown_sec = int(error.retry_after % 60)
-      cooldown_msg = degrading_msgs[r] + f'. Global cooldown ends in {cooldown_min} minutes and {cooldown_sec} seconds.'
+      if cooldown_min > 0:
+          cooldown_msg = degrading_msgs[r] + f'. Global cooldown ends in {cooldown_min} minutes and {cooldown_sec} seconds.'
+      else:
+          cooldown_msg = degrading_msgs[r] + f'. Global cooldown ends in {cooldown_sec} seconds.'
       await ctx.reply(cooldown_msg, ephemeral=True)
       return
 
