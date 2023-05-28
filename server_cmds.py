@@ -74,6 +74,7 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
 
   async def is_admin(ctx):
     """Check to restrict certain server cmds"""
+    # TODO switch to Admin role
     # can't use self here so just grab from env file everytime
     admins = []
     NUM_ADMINS = int(os.environ['NUM_ADMINS'])
@@ -120,22 +121,28 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
       await ctx.reply("Oh fuck i messed up the code somewhere uhh oh fuck my bad", ephemeral=True)
       await ctx.reply("Is there a role named 'chat revive' in this server?", ephemeral=True)
 
-    # TODO fix this bc it doesn't work with slash commands
     revival_msg = '<@&' + str(rid) + '>'
     await ctx.send(revival_msg)
   @revive.error
   async def revive_error(self, ctx, error):
-    degrading_msgs = ['Touch some grass', 'Get some bitches', 'Insert degrading message here']
+    degrading_msgs = ['Touch some grass.', 'Get some bitches.', 'Insert degrading message here.', 'Eat some vegetables.', 'Do a pushup.'
+                      , 'Get vaccinated.', 'You love attention don\'t you?']
     if isinstance(error, commands.CommandOnCooldown):
       r = randint(0, len(degrading_msgs)-1)
       cooldown_min = int(error.retry_after / 60)
       cooldown_sec = int(error.retry_after % 60)
       if cooldown_min > 0:
-          cooldown_msg = degrading_msgs[r] + f'. Global cooldown ends in {cooldown_min} minutes and {cooldown_sec} seconds.'
+          cooldown_msg = degrading_msgs[r] + f' Global cooldown ends in {cooldown_min} minutes and {cooldown_sec} seconds.'
       else:
-          cooldown_msg = degrading_msgs[r] + f'. Global cooldown ends in {cooldown_sec} seconds.'
+          cooldown_msg = degrading_msgs[r] + f' Global cooldown ends in {cooldown_sec} seconds.'
       await ctx.reply(cooldown_msg, ephemeral=True)
       return
+    
+  @commands.hybrid_command(with_app_command=True, description="Gives info on the Pic Perms role")
+  @app_commands.guilds(g)
+  async def pic(self, ctx):
+    """Gives info on the Pic Perms Role"""
+    await ctx.reply("The <@&1112245429170602114> role is automatically given to users who have a Server Activity Score of 5000 with Tatsu bot. go to <#1109597528581738547> and type /score username to check your standing. You automatically get points the more you speak in the server!")
 
   @commands.hybrid_command(with_app_command=True,description="Sends a text to speech message in a voice channel with a selected voice")
   @app_commands.guilds(g)
