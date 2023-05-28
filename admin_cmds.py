@@ -12,11 +12,6 @@ import os
 from discord import ui
 from discord import app_commands
 
-# test server id
-# should be global though, no?
-gid = 954166428674707526
-g = discord.Object(id=gid)
-
 class Admin_Cmds(commands.Cog, name='Admin Commands'):
 
     def __init__(self, bot):
