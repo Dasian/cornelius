@@ -19,7 +19,6 @@ import time
 import re
 import requests
 import os
-from discord import app_commands
 
 class Server_Cmds(commands.Cog, name="Server Commands"):
   

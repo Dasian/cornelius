@@ -9,8 +9,7 @@ import embedder
 import asyncio
 from dotenv import load_dotenv
 import os
-from discord import ui
-from discord import app_commands
+import random
 
 class Admin_Cmds(commands.Cog, name='Admin Commands'):
 
@@ -293,6 +292,52 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     async def ping_error(self, ctx, error):
         await ctx.send('Usage: corn?ping [role] [channel_id]\nUse corn?roles and corn?channels to get the arguments\nEx: corn?ping twitter 11')
 
+    @commands.hybrid_command(with_app_command=True, description="Set the current embed to send during a server event (boost, welcome, etc.)")
+    async def set(self, ctx, ename):
+        """Set the current embed to send during a server event (boost, welcome, etc.)"""
+        # verify valid event
+        # TODO implement max, msg, and update documentation
+        event_names = ['boost-embed', 'max-boost', 'boost-msg']
+        if ename.lower() not in event_names:
+            await ctx.send(ename + ' is not a valid event name')
+            await ctx.send('valid names: ' + str(event_names))
+            return
+
+        # fill out example fields with test data
+        embed = embedder.preview()
+        uname = 862948136121270312
+        num_boosts = random.randint(0, 13)
+        next_lvl = -1
+        if num_boosts < 2:
+            next_lvl = 2 - num_boosts
+        elif num_boosts < 7:
+            next_lvl = 7 - num_boosts
+        elif num_boosts < 14:
+            next_lvl = 14 - num_boosts
+
+        # fill boost attributes
+        attr = {'num_boosts': num_boosts, 'next_lvl': next_lvl, 'uname': uname}
+        embed = embedder.fill_fields(embed, attr)
+        print('returned embed', embed)
+        
+        # ask confirmation and save
+        await ctx.send("Preview:")
+        await ctx.send(f"{{uname}} replaced with <@{uname}>")
+        await ctx.send(f"{{num_boosts}} replaced with {num_boosts}")
+        await ctx.send(f"{{next_lvl}} replaced with {next_lvl}")
+        await ctx.send(embed=embed)
+        await ctx.send("Is this information correct? (yes/no)")
+        try:
+            conf_msg = await self.bot.wait_for('message', timeout=30)
+            if conf_msg.content.lower() == 'yes':
+                # embedder.save(f'bot_embeds/{ename.lower()}')
+                await ctx.send('pretend save here')
+            else:
+                await ctx.send('gun')
+        except asyncio.TimeoutError:
+            await ctx.send('You real busy arent u... This is all I have val, I only exist to serve u...')
+        return
+
     '''
         Misc
     '''
@@ -319,6 +364,8 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
             return
         await self.bot.tree.sync(guild=discord.Object(id=self.bot.gid))
         await ctx.send("Resync complete")
+
+    # TODO add status changer
 
 async def setup(bot):
     """Adds commands to bot"""
