@@ -61,7 +61,7 @@ class Cornelius(commands.Bot):
         next_lvl = 14 - num_boosts
 
       # fillable boost attributes
-      max_boosts = next_lvl < 0
+      max_boosts = next_lvl <= 0
       uname = after.id
       boost_attr = {'num_boosts': num_boosts, 'next_lvl': next_lvl, 'uname': uname}
 
