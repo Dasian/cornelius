@@ -42,6 +42,14 @@
       {
         "name": "video-[url/height/width]",
         "value": "Puts the video in the body of the message. The height and width can also be specified."
+      },
+      {
+        "name": "corn?set [event_name]",
+        "value": "boost-embed - the embedded message to be sent whenever the server is boosted\nmax-boost - the embedded message to be sent whenever the server is boosted + maxed out\nboost-msg - the regular message to be sent before the embedded message, allows for pinging"
+      },
+      {
+        "name": "fillable fields in corn?set [event_name]",
+        "value": "custom values that will be filled out in a message when the event is triggered. Just insert {value_name} in the message. Run corn?load boost-example for an example\n{uname} - ping a username\n {num_boosts} - current number of boosts in the server\n{next_lvl} - number of boosts needed to get to the next level"
       }
     ],
     "footer": {

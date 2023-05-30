@@ -39,14 +39,9 @@ class Cornelius(commands.Bot):
   async def on_member_update(self, before, after):
     """When a server member's role is updated; Used for server boosting msg"""
     # publishing info
-    boost_rid = 868591762812305448
+    boost_rid = 868591762812305448  # server booster role id used to determine if a user boosted the server
     boost_channel = 1109592692113022996
     gid = 862949747396837386
-
-    # tmp vars for testing
-    boost_rid = 1112460273274593353
-    boost_channel = 954167218202107924
-    gid = 954166428674707526
 
     # member has just boosted the server
     before_roles = [r.id for r in before.roles]
@@ -71,10 +66,10 @@ class Cornelius(commands.Bot):
       boost_attr = {'num_boosts': num_boosts, 'next_lvl': next_lvl, 'uname': uname}
 
       # thank @user
-      f = open('bot_embeds/boost-msg.json')
-      msg = json.load(f)
+      f = open('bot_embeds/boost-msg.txt')
+      msg = f.read()
       f.close()
-      boost_msg = embedder.fill_fields(msg['msg'], boost_attr)
+      boost_msg = embedder.fill_fields(msg, boost_attr)
 
       # load boost template
       fname = ''

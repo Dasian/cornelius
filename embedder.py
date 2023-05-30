@@ -311,11 +311,11 @@ def fill_fields(msg, attr):
     # fill embed
     e = discord.Embed.to_dict(msg)
     map_nested_dicts_modify(e, format_embed)
+    return discord.Embed.from_dict(e)
   elif type(msg) is str:
     # fill text
-    return msg.format(num_boosts=attr['num_boosts'], next_lvl=attr['next_lvl'], uname=f"<@{attr['uname']}>")
-
-  return discord.Embed.from_dict(e)
+    return msg.format(num_boosts=attr['num_boosts'], next_lvl=attr['next_lvl'], uname=f"<@{attr['uname']}>") 
+  return None
 
 '''
     corn?help [group]
