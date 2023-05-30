@@ -16,6 +16,10 @@
         "value": "Ping the 'chat revive' role to revive this channel [15 min global cooldown]"
       },
       {
+        "name": "corn?pic",
+        "value": "Gives info on the Pic Perms role"
+      },
+      {
         "name": "corn?voice_search [query]",
         "value": " Search for available text to speech voices [admin only]"
       },

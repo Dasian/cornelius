@@ -161,3 +161,6 @@ cython_debug/
 
 # preset templates? Definitely keep bot_embeds
 templates/
+
+# vscode smh
+.vscode/

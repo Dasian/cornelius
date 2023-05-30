@@ -8,6 +8,7 @@
 import discord
 import json
 import os
+import collections.abc
 
 # Initialization
 # timestamp? provider?
@@ -47,7 +48,7 @@ def new():
 def preview():
   """
   Show the current state of the embedded message
-  Eeturns the embedded message to be printed
+  Returns the embedded message to be printed
   """
   print("Previewing embed")
   global embed
@@ -280,6 +281,41 @@ def voice_search_embed(list):
   if results != '':
     e.add_field(name='Results:', value=results, inline=False)
   return e
+
+def fill_fields(msg, attr):
+  """
+  Returns an Embed obj with custom fields filled out 
+  e is a discord.embeds.Embed obj
+  attr['value-name'] fills occurrences of {value-name} in an embed
+  Currently only works for boost msgs
+  """
+  # https://stackoverflow.com/questions/32935232/python-apply-function-to-values-in-nested-dictionary
+  def map_nested_dicts_modify(ob, func):
+    for k, v in ob.items():
+      if isinstance(v, collections.abc.Mapping):
+        map_nested_dicts_modify(v, func)
+      elif isinstance(v, list):
+        # list of dict objs that need to be formatted
+        for x in v:
+          map_nested_dicts_modify(x, format_embed)
+        ob[k] = [x for x in v]
+      else:
+        ob[k] = func(v)
+  def format_embed(i):
+    if type(i) is str:
+      i = i.format(num_boosts=attr['num_boosts'], next_lvl=attr['next_lvl'], uname=f"<@{attr['uname']}>")
+    return i
+
+  print('in fill_fields')
+  if type(msg) is discord.embeds.Embed:
+    # fill embed
+    e = discord.Embed.to_dict(msg)
+    map_nested_dicts_modify(e, format_embed)
+    return discord.Embed.from_dict(e)
+  elif type(msg) is str:
+    # fill text
+    return msg.format(num_boosts=attr['num_boosts'], next_lvl=attr['next_lvl'], uname=f"<@{attr['uname']}>") 
+  return None
 
 '''
     corn?help [group]

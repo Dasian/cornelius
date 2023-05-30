@@ -19,11 +19,6 @@ import time
 import re
 import requests
 import os
-from discord import app_commands
-
-# test server id
-gid = 954166428674707526
-g = discord.Object(id=gid)
 
 class Server_Cmds(commands.Cog, name="Server Commands"):
   
@@ -74,6 +69,7 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
 
   async def is_admin(ctx):
     """Check to restrict certain server cmds"""
+    # TODO switch to Admin role
     # can't use self here so just grab from env file everytime
     admins = []
     NUM_ADMINS = int(os.environ['NUM_ADMINS'])
@@ -83,7 +79,6 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
     return ctx.author.id in admins
 
   @commands.hybrid_command(description="Prints server help menu", with_app_command=True)
-  @app_commands.guilds(g)
   async def help(self, ctx, group:str = None):
     """Displays help msg"""
     # admin help (admin and pm)
@@ -95,7 +90,6 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
     return
 
   @commands.hybrid_command(with_app_command=True,aliases=['quote', 'quotes', 'hello'], description="Sends a random Valentina quote")
-  @app_commands.guilds(g)
   async def hey(self, ctx):
     """Sends a random val quote"""
     await ctx.reply(self.messages[random.randint(0, len(self.messages)-1)])
@@ -103,7 +97,6 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
 
   @commands.command(description="Pings users with the chat revive role to revive a dead channel. Has a global cooldown for all users.")
   @commands.cooldown(1, 900, commands.BucketType.user)
-  @app_commands.guilds(g)
   async def revive(self, ctx):
     """
     Pings the chat revive role to revive a channel
@@ -120,25 +113,29 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
       await ctx.reply("Oh fuck i messed up the code somewhere uhh oh fuck my bad", ephemeral=True)
       await ctx.reply("Is there a role named 'chat revive' in this server?", ephemeral=True)
 
-    # TODO fix this bc it doesn't work with slash commands
     revival_msg = '<@&' + str(rid) + '>'
     await ctx.send(revival_msg)
   @revive.error
   async def revive_error(self, ctx, error):
-    degrading_msgs = ['Touch some grass', 'Get some bitches', 'Insert degrading message here']
+    degrading_msgs = ['Touch some grass.', 'Get some bitches.', 'Insert degrading message here.', 'Eat some vegetables.', 'Do a pushup.'
+                      , 'Get vaccinated.', 'You love attention don\'t you?']
     if isinstance(error, commands.CommandOnCooldown):
       r = randint(0, len(degrading_msgs)-1)
       cooldown_min = int(error.retry_after / 60)
       cooldown_sec = int(error.retry_after % 60)
       if cooldown_min > 0:
-          cooldown_msg = degrading_msgs[r] + f'. Global cooldown ends in {cooldown_min} minutes and {cooldown_sec} seconds.'
+          cooldown_msg = degrading_msgs[r] + f' Global cooldown ends in {cooldown_min} minutes and {cooldown_sec} seconds.'
       else:
-          cooldown_msg = degrading_msgs[r] + f'. Global cooldown ends in {cooldown_sec} seconds.'
+          cooldown_msg = degrading_msgs[r] + f' Global cooldown ends in {cooldown_sec} seconds.'
       await ctx.reply(cooldown_msg, ephemeral=True)
       return
+    
+  @commands.hybrid_command(with_app_command=True, description="Gives info on the Pic Perms role")
+  async def pic(self, ctx):
+    """Gives info on the Pic Perms Role"""
+    await ctx.reply("The <@&1112245429170602114> role is automatically given to users who have a Server Activity Score of 5000 with Tatsu bot. go to <#1109597528581738547> and type /score username to check your standing. You automatically get points the more you speak in the server!")
 
   @commands.hybrid_command(with_app_command=True,description="Sends a text to speech message in a voice channel with a selected voice")
-  @app_commands.guilds(g)
   @commands.check(is_admin)
   async def imitate(self, ctx, voice, *, message):
     """Sends a tts message with chosen voice in vc"""
@@ -209,7 +206,6 @@ class Server_Cmds(commands.Cog, name="Server Commands"):
               return BytesIO(await r.read())
 
   @commands.hybrid_command(with_app_command=True,description="Search voices usable by the imitate cmd")
-  @app_commands.guilds(g)
   @commands.check(is_admin)
   async def voice_search(self, ctx, *, query:str):
     """Search voices usable by imitate"""

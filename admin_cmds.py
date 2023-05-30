@@ -9,13 +9,9 @@ import embedder
 import asyncio
 from dotenv import load_dotenv
 import os
-from discord import ui
-from discord import app_commands
-
-# test server id
-# should be global though, no?
-gid = 954166428674707526
-g = discord.Object(id=gid)
+import random
+import json
+import copy
 
 class Admin_Cmds(commands.Cog, name='Admin Commands'):
 
@@ -267,15 +263,6 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
         c = "\nChannel: " + publish_channel.name
         msg_location = s  + c
         
-        # create embed (old way just puts a msg in embed and changes color)
-        '''
-        color_map = {'twitter': 0x00acee, 'patreon': 0xff424D, 'youtube': 0xff0000, 'tiktok': 0xff0050}
-        if role.name.lower() in color_map.keys():
-            color = color_map[role.name.lower()]
-        else:
-            color = 0x36393F
-        ping_embed = discord.Embed(color=color, description=ping_msg)
-        '''
         # preview currently loaded embed
         ping_embed = embedder.preview()
 
@@ -297,6 +284,86 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     @ping.error
     async def ping_error(self, ctx, error):
         await ctx.send('Usage: corn?ping [role] [channel_id]\nUse corn?roles and corn?channels to get the arguments\nEx: corn?ping twitter 11')
+
+    @commands.hybrid_command(with_app_command=True, description="Set the current embed to send during a server event (boost, welcome, etc.)")
+    async def set(self, ctx, ename, *, msg=None):
+        """Set the current embed to send during a server event (boost, welcome, etc.)"""
+        # usage: corn?set boost; corn?set boost-msg [msg]
+
+        # verify valid event
+        event_names = ['boost-embed', 'max-boost', 'boost-msg']
+        if ename.lower() not in event_names:
+            await ctx.send(ename + ' is not a valid event name')
+            await ctx.send('valid names: ' + str(event_names))
+            return
+        is_embed = ename.lower() !='boost-msg'
+        if not is_embed and msg is None:
+            await ctx.send('boost-msg can\'t be empty!')
+            return
+
+        # fill out example fields with test data
+        embed = None
+        if is_embed:
+            print('in set, loading curr embed')
+            embed = embedder.preview()
+        uname = 862948136121270312
+        num_boosts = random.randint(0, 13)
+        next_lvl = -1
+        if num_boosts < 2:
+            next_lvl = 2 - num_boosts
+        elif num_boosts < 7:
+            next_lvl = 7 - num_boosts
+        elif num_boosts < 14:
+            next_lvl = 14 - num_boosts
+
+        # fill boost attributes
+        attr = {'num_boosts': num_boosts, 'next_lvl': next_lvl, 'uname': uname}
+        if is_embed:
+            print('filling curr embed in set')
+            test_embed = embedder.fill_fields(copy.deepcopy(embed), attr)
+            print('embed filling complete!')
+        else:
+            test_msg = embedder.fill_fields(msg, attr)
+        
+        # ask confirmation and save
+        await ctx.send("Preview:")
+        await ctx.send(f"{{uname}} replaced with <@{uname}>")
+        await ctx.send(f"{{num_boosts}} replaced with {num_boosts}")
+        await ctx.send(f"{{next_lvl}} replaced with {next_lvl}")
+        if is_embed:
+            await ctx.send(embed=test_embed)
+        else:
+            await ctx.send(test_msg)
+        await ctx.send("Is this information correct? (yes/no)")
+        try:
+            conf_msg = await self.bot.wait_for('message', timeout=30)
+            # save event response in /bot_embeds/{event_name}.{ext}
+            if conf_msg.content.lower() == 'yes':
+                dir = 'bot_embeds/'
+                content = None
+                ext = None
+                if is_embed:
+                    content = json.dumps(embed.to_dict())
+                    ext = '.json'
+                else:
+                    content = msg
+                    ext = '.txt'
+                f = open(dir + ename.lower() + ext, 'r+')
+                f.truncate(0)
+                f.write(content)
+                f.close()
+                await ctx.send('now this is truly a victory royale')
+            else:
+                await ctx.send('gun')
+        except asyncio.TimeoutError:
+            await ctx.send('You real busy arent u... This is all I have val, I only exist to serve u...')
+        return
+    @set.error
+    async def set_error(self, ctx, error):
+        await ctx.send('Usage: corn?set [event_name] [optional:msg]')
+        await ctx.send('Use corn?help publish for more info on this cmd')
+        await ctx.send('Use corn?help attributes for info on fillable fields')
+        await ctx.send(error)
 
     '''
         Misc
@@ -324,6 +391,8 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
             return
         await self.bot.tree.sync(guild=discord.Object(id=self.bot.gid))
         await ctx.send("Resync complete")
+
+    # TODO add status changer
 
 async def setup(bot):
     """Adds commands to bot"""
