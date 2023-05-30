@@ -334,6 +334,7 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
             await ctx.send(embed=test_embed)
         else:
             await ctx.send(test_msg)
+        await ctx.send("Channel: <#1109592692113022996>")
         await ctx.send("Is this information correct? (yes/no)")
         try:
             conf_msg = await self.bot.wait_for('message', timeout=30)
