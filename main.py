@@ -74,7 +74,7 @@ class Cornelius(commands.Bot):
       # load boost template
       fname = ''
       if max_boosts:
-        fname = 'bot_embeds/max-boosts.json'
+        fname = 'bot_embeds/max-boost.json'
       else:
         fname = 'bot_embeds/boost-embed.json'
       f = open(fname, 'r')
