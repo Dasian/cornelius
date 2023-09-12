@@ -38,6 +38,7 @@ class Cornelius(commands.Bot):
   
   async def on_member_update(self, before, after):
     """When a server member's role is updated; Used for server boosting msg"""
+    # TODO potentially try to make this a server_cmds cog listener
     # publishing info
     boost_rid = 868591762812305448  # server booster role id used to determine if a user boosted the server
     boost_channel = 1109592692113022996

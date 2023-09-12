@@ -30,6 +30,10 @@
       {
         "name": "corn?set [event_name] [optional:msg]",
         "value": "Set the current msg to send when an event is triggered. Use corn?help attributes for a list of events and fillable fields\n Ex: corn?set boost-embed\n corn?set boost-msg Thank you {uname}!!"
+      },
+      {
+        "name": "corn?status [status_type] [status]",
+        "value": "Updates the status of this bot (sidebar)"
       }
     ],
     "footer": {

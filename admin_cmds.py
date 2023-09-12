@@ -285,6 +285,45 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
     async def ping_error(self, ctx, error):
         await ctx.send('Usage: corn?ping [role] [channel_id]\nUse corn?roles and corn?channels to get the arguments\nEx: corn?ping twitter 11')
 
+    # TODO add status changer
+    @commands.hybrid_command(with_app_command=True, description="Updates Cornelius' status")
+    async def status(self, ctx, stype, *, status=None):
+        """Updates the status of this bot (sidebar)"""
+        # https://stackoverflow.com/questions/59126137/how-to-change-activity-of-a-discord-py-bot
+        # usage: corn?status [stype] [status]
+
+        # verify valid status
+        status_types = ['playing', 'streaming', 'listening', 'watching']
+        if stype.lower() not in status_types:
+            await ctx.send(stype + ' is not a valid event name')
+            await ctx.send('valid names: ' + str(status_types))
+            return
+        if status is None:
+            await ctx.send('status can\'t be empty!')
+            return
+        
+        # set up status object (activity)
+        activity = None
+        if stype.lower() == 'playing':
+            activity = discord.Game(name=status)
+        elif stype.lower() == 'streaming':
+            # this also takes a url arg?
+            activity = discord.Streaming(name=status, url='https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+        elif stype.lower() == 'listening':
+            activity = discord.Activity(type=discord.ActivityType.listening, name=status)
+        elif stype.lower() == 'watching':
+            activity = discord.Activity(type=discord.ActivityType.watching, name=status)
+
+        # changes status
+        await ctx.bot.change_presence(activity=activity)
+        await ctx.send('status updated')
+        return
+    @status.error
+    async def status_error(self, ctx, error):
+        await ctx.send('Usage: corn?status [status_type] [status]')
+        await ctx.send('Status Types: playing, streaming, listening, watching')
+        await ctx.send(error)
+
     @commands.hybrid_command(with_app_command=True, description="Set the current embed to send during a server event (boost, welcome, etc.)")
     async def set(self, ctx, ename, *, msg=None):
         """Set the current embed to send during a server event (boost, welcome, etc.)"""
@@ -393,7 +432,6 @@ class Admin_Cmds(commands.Cog, name='Admin Commands'):
         await self.bot.tree.sync(guild=discord.Object(id=self.bot.gid))
         await ctx.send("Resync complete")
 
-    # TODO add status changer
 
 async def setup(bot):
     """Adds commands to bot"""
