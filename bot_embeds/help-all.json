@@ -21,7 +21,7 @@
       },
       {
         "name": "Publishing Commands",
-        "value": "corn?channels - get a list of all channel_ids you can post to\ncorn?publish [channel_id] - publishes the current msg to the channel_id\ncorn?speak [channel_id] [message] - send a normal discord message to the channel id\ncorn?roles - get a list of all roles you can ping\ncorn?ping [role_name] [channel_id] - ping a role and publish current embedded msg\ncorn?set [event_name] [optional:msg] - set the current embedded message to send when a server event is triggered"
+        "value": "corn?channels - get a list of all channel_ids you can post to\ncorn?publish [channel_id] - publishes the current msg to the channel_id\ncorn?speak [channel_id] [message] - send a normal discord message to the channel id\ncorn?roles - get a list of all roles you can ping\ncorn?ping [role_name] [channel_id] - ping a role and publish current embedded msg\ncorn?set [event_name] [optional:msg] - set the current embedded message to send when a server event is triggered\ncorn?status [status_type] [status] - set the status of the bot (sidebar)"
       },
       {
         "name": "Single Attributes",

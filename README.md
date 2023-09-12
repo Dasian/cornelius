@@ -9,11 +9,10 @@ Custom discord bot for VTuber Valentina Chisei
 - Chat revival command with cooldown
 - Custom voice tts (text to speech) using uberduck ai
 - Sends custom embeds when server is boosted
+- Custom status message
 
 # TODO
-- Custom server boost notifications
 - Implement list template name and preview template
-- Implement status command
 - Improve readme
 - Make confirmation code into own helper function
 - Make formatting consistent
