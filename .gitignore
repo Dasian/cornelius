@@ -164,3 +164,8 @@ templates/
 
 # vscode smh
 .vscode/
+
+# custom boost messages
+bot_embeds/boost-msg.txt
+bot_emebds/max-boost.json
+bot_embeds/boost-embed.json
