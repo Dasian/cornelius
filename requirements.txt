@@ -1,0 +1,5 @@
+# loading private token values from .env file
+python-dotenv
+
+# discord api wrapper for python
+discord.py
