@@ -32,7 +32,27 @@ source .cornelius/bin/activate
 pip3 install -r requirements.txt
 ```
 ### .env File
-This file contains a list of values which need to be filled in order to activate full bot functionality.
+Create a .env file with the following to activate full bot functionality.
+```
+# discord bot values
+# values generated in the discord developer portal
+# https://discord.com/developers/applications
+TOKEN=
+PERMS=
+
+# admin setup
+# determines how many/who has privileged command access
+# increase to desired number and add that number of tokens
+NUM_ADMINS=1
+ADMIN0=
+#ADMIN1=user discord token here
+#ADMIN2=
+
+# uberduck api (ai text to speech) [optional]
+# https://www.uberduck.ai/
+UBERDUCK_API_KEY=
+UBERDUCK_API_SECRET=
+```
 
 ## Running
 Once the .env file is filled you can run the bot using the command
